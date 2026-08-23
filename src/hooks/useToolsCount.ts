@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
+const FALLBACK_COUNT = 4000;
+
 export const useToolsCount = () => {
   return useQuery({
     queryKey: ['tools-count'],
@@ -10,16 +12,17 @@ export const useToolsCount = () => {
         .select('*', { count: 'exact', head: true });
 
       if (error) throw error;
-      return count || 0;
+      return count || FALLBACK_COUNT;
     },
+    placeholderData: FALLBACK_COUNT,
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 };
 
 export const formatToolsCount = (count: number | undefined): string => {
-  if (!count) return '1000+';
-  if (count >= 1000) {
-    return `${Math.floor(count / 100) * 100}+`;
+  const value = count && count > 0 ? count : FALLBACK_COUNT;
+  if (value >= 1000) {
+    return `${Math.floor(value / 100) * 100}+`;
   }
-  return `${count}+`;
+  return `${value}+`;
 };
