@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +18,9 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const nextParam = searchParams.get('next');
+  const redirectTo = nextParam && nextParam.startsWith('/') && !nextParam.startsWith('//') ? nextParam : '/';
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,7 +40,7 @@ const Login = () => {
         title: '登录成功',
         description: '欢迎回来！',
       });
-      navigate('/');
+      navigate(redirectTo);
     }
 
     setLoading(false);
@@ -83,7 +86,7 @@ const Login = () => {
               </Button>
               <p className="text-sm text-muted-foreground">
                 {t('auth.noAccount')}{' '}
-                <Link to="/register" className="text-primary hover:underline">
+                <Link to={`/register${nextParam ? `?next=${encodeURIComponent(nextParam)}` : ''}`} className="text-primary hover:underline">
                   {t('auth.goRegister')}
                 </Link>
               </p>
