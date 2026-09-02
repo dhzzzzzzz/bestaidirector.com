@@ -62,17 +62,31 @@ const ToolDetail = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('comments')
-        .select('*, profiles(*)')
+        .select('*')
         .eq('tool_id', id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data.map((c: any) => ({
+
+      const userIds = [...new Set((data || []).map((c: any) => c.user_id))];
+      let profileMap: Record<string, { username: string }> = {};
+      if (userIds.length) {
+        const { data: profs } = await supabase
+          .from('public_profiles' as any)
+          .select('user_id, username, avatar_url')
+          .in('user_id', userIds);
+        profileMap = Object.fromEntries(
+          ((profs as any[]) || []).map((p) => [p.user_id, p])
+        );
+      }
+
+      return (data || []).map((c: any) => ({
         ...c,
-        profile: c.profiles,
+        profile: profileMap[c.user_id] || { username: 'user' },
       })) as (Comment & { profile: { username: string } })[];
     },
   });
+
 
   const { data: isFavorited } = useQuery({
     queryKey: ['favorite', id, user?.id],

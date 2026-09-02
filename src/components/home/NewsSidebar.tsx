@@ -45,7 +45,7 @@ export const NewsSidebar = () => {
     refetchInterval: 5 * 60 * 1000, // 每5分钟刷新一次
   });
 
-  const localized = (item: AiNews, field: 'title' | 'summary') => {
+  const localized = (item: AiNews, field: 'title' | 'summary' | 'source') => {
     if (language === 'zh') return item[field];
     return (item as any)[`${field}_${language}`] || item[field];
   };
@@ -145,9 +145,10 @@ export const NewsSidebar = () => {
                 {/* Meta */}
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <div className="flex items-center gap-2">
-                    {item.source && (
-                      <span className="text-primary/70">{item.source}</span>
+                    {localized(item, 'source') && (
+                      <span className="text-primary/70">{localized(item, 'source')}</span>
                     )}
+
                     <span>{formatTime(item.published_at)}</span>
                   </div>
                   <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
