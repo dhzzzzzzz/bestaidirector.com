@@ -9,12 +9,14 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage, useCategoryName } from '@/contexts/LanguageContext';
+import { useTagTranslations } from '@/hooks/useTagTranslations';
 import { supabase } from '@/integrations/supabase/client';
 import { AiTool, Category } from '@/types/database';
 import { cn } from '@/lib/utils';
 
 const ExplorePage = () => {
   const { t } = useLanguage();
+  const { translateTag } = useTagTranslations();
   const categoryName = useCategoryName();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<ActiveFilters>({});
@@ -67,6 +69,9 @@ const ExplorePage = () => {
       const query = searchQuery.toLowerCase();
       result = result.filter(tool => 
         tool.name.toLowerCase().includes(query) ||
+        ((tool as any).name_en || '').toLowerCase().includes(query) ||
+        ((tool as any).name_ja || '').toLowerCase().includes(query) ||
+        ((tool as any).name_ko || '').toLowerCase().includes(query) ||
         tool.description?.toLowerCase().includes(query) ||
         tool.tags?.some(tag => tag.toLowerCase().includes(query))
       );
@@ -98,7 +103,7 @@ const ExplorePage = () => {
         const group = filterGroups[groupKey];
         const option = group?.options.find(o => o.key === optionKey);
         if (option) {
-          summary.push(option.label);
+          summary.push(t(`filter.opt.${option.key}`));
         }
       }
     });
@@ -287,7 +292,7 @@ const ExplorePage = () => {
                     className="rounded-full text-xs"
                     onClick={() => setSearchQuery(tag)}
                   >
-                    {tag}
+                    {translateTag(tag)}
                     <Badge variant="secondary" className="ml-1 text-xs">
                       {count}
                     </Badge>

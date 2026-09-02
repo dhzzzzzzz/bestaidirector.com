@@ -11,8 +11,9 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { useTagTranslations } from '@/hooks/useTagTranslations';
 import { useTranslatedDescription } from '@/hooks/useTranslatedTool';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useLanguage, useCategoryName } from '@/contexts/LanguageContext';
 import { AiTool, Comment, Category } from '@/types/database';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -24,8 +25,11 @@ const ToolDetail = () => {
   const queryClient = useQueryClient();
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(5);
-  const { getDescription, getDetailedDescription } = useTranslatedDescription();
+  const { getDescription, getDetailedDescription, getName } = useTranslatedDescription();
   const { language, t } = useLanguage();
+  const categoryName = useCategoryName();
+  const dateLocale = language === 'zh' ? 'zh-CN' : language === 'ja' ? 'ja-JP' : language === 'ko' ? 'ko-KR' : 'en-US';
+  const { translateTag } = useTagTranslations();
 
   const { data: tool, isLoading } = useQuery({
     queryKey: ['tool', id],
@@ -87,7 +91,7 @@ const ToolDetail = () => {
 
   const toggleFavorite = useMutation({
     mutationFn: async () => {
-      if (!user) throw new Error('请先登录');
+      if (!user) throw new Error(t('detail.loginFirst'));
       
       if (isFavorited) {
         await supabase
@@ -104,15 +108,15 @@ const ToolDetail = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['favorite', id] });
       toast({
-        title: isFavorited ? '已取消收藏' : '已添加收藏',
+        title: isFavorited ? t('detail.favRemoved') : t('detail.favAdded'),
       });
     },
   });
 
   const submitComment = useMutation({
     mutationFn: async () => {
-      if (!user) throw new Error('请先登录');
-      if (!comment.trim()) throw new Error('请输入评论内容');
+      if (!user) throw new Error(t('detail.loginFirst'));
+      if (!comment.trim()) throw new Error(t('detail.commentEmpty'));
 
       await supabase.from('comments').insert({
         tool_id: id,
@@ -124,12 +128,12 @@ const ToolDetail = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tool-comments', id] });
       setComment('');
-      toast({ title: '评论发布成功' });
+      toast({ title: t('detail.commentSuccess') });
     },
     onError: (error: Error) => {
       toast({
         variant: 'destructive',
-        title: '评论失败',
+        title: t('detail.commentFailed'),
         description: error.message,
       });
     },
@@ -150,9 +154,9 @@ const ToolDetail = () => {
     return (
       <Layout>
         <div className="container py-16 text-center">
-          <h1 className="text-2xl font-bold mb-4">工具不存在</h1>
+          <h1 className="text-2xl font-bold mb-4">{t('detail.notFound')}</h1>
           <Button asChild>
-            <Link to="/">返回首页</Link>
+            <Link to="/">{t('detail.backHome')}</Link>
           </Button>
         </div>
       </Layout>
@@ -165,7 +169,7 @@ const ToolDetail = () => {
         <Button variant="ghost" asChild className="mb-6">
           <Link to="/">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            返回首页
+            {t('detail.backHome')}
           </Link>
         </Button>
 
@@ -177,7 +181,7 @@ const ToolDetail = () => {
               {tool.logo_url ? (
                 <img
                   src={tool.logo_url}
-                  alt={tool.name}
+                  alt={getName(tool)}
                   className="h-20 w-20 rounded-xl object-contain"
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = 'none';
@@ -189,18 +193,18 @@ const ToolDetail = () => {
                 "text-5xl font-bold text-primary",
                 tool.logo_url && "hidden"
               )}>
-                {tool.name.charAt(0)}
+                {getName(tool).charAt(0)}
               </span>
             </div>
 
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-3 mb-3">
-                <h1 className="text-3xl font-bold">{tool.name}</h1>
+                <h1 className="text-3xl font-bold">{getName(tool)}</h1>
                 {tool.is_hot && (
-                  <Badge variant="destructive" className="text-sm">🔥 热门</Badge>
+                  <Badge variant="destructive" className="text-sm">🔥 {t('detail.hot')}</Badge>
                 )}
                 {tool.is_featured && (
-                  <Badge className="text-sm">⭐ 精选</Badge>
+                  <Badge className="text-sm">⭐ {t('detail.featured')}</Badge>
                 )}
               </div>
 
@@ -215,28 +219,28 @@ const ToolDetail = () => {
                     <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                     <span className="font-semibold text-lg">{Number(tool.rating_avg).toFixed(1)}</span>
                     <span className="text-muted-foreground">
-                      ({tool.rating_count} 评价)
+                      ({t('detail.reviews', { count: tool.rating_count })})
                     </span>
                   </div>
                 )}
                 <div className="flex items-center gap-1.5 text-muted-foreground">
                   <Eye className="h-4 w-4" />
-                  <span>{tool.view_count || 0} 次浏览</span>
+                  <span>{t('detail.views', { count: tool.view_count || 0 })}</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-muted-foreground">
                   <Calendar className="h-4 w-4" />
-                  <span>收录于 {new Date(tool.created_at).toLocaleDateString('zh-CN')}</span>
+                  <span>{t('detail.added', { date: new Date(tool.created_at).toLocaleDateString(dateLocale) })}</span>
                 </div>
               </div>
 
               {/* Tags */}
               <div className="flex flex-wrap items-center gap-2 mb-5">
                 {tool.category && (
-                  <Badge variant="secondary" className="text-sm">{tool.category.name}</Badge>
+                  <Badge variant="secondary" className="text-sm">{categoryName(tool.category.slug, tool.category.name)}</Badge>
                 )}
                 {tool.tags?.map((tag) => (
                   <Badge key={tag} variant="outline" className="text-sm">
-                    {tag}
+                    {translateTag(tag)}
                   </Badge>
                 ))}
               </div>
@@ -246,7 +250,7 @@ const ToolDetail = () => {
                 <Button size="lg" asChild className="gap-2">
                   <a href={tool.website_url} target="_blank" rel="noopener noreferrer">
                     <Globe className="h-5 w-5" />
-                    访问官网
+                    {t('detail.visit')}
                     <ExternalLink className="h-4 w-4 ml-1" />
                   </a>
                 </Button>
@@ -260,7 +264,7 @@ const ToolDetail = () => {
                   <Heart
                     className={cn('h-5 w-5', isFavorited && 'fill-current text-red-500')}
                   />
-                  {isFavorited ? '已收藏' : '收藏'}
+                  {isFavorited ? t('detail.favorited') : t('detail.favorite')}
                 </Button>
               </div>
             </div>
@@ -273,7 +277,7 @@ const ToolDetail = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Globe className="h-5 w-5" />
-                {language === 'en' ? 'Details' : language === 'ja' ? '詳細紹介' : language === 'ko' ? '상세 소개' : '详细介绍'}
+                {t('detail.details')}
               </CardTitle>
             </CardHeader>
             <CardContent className="prose prose-sm dark:prose-invert max-w-none">
@@ -315,14 +319,14 @@ const ToolDetail = () => {
         {/* Quick Info Card */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle>快速信息</CardTitle>
+            <CardTitle>{t('detail.quickInfo')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
                 <Globe className="h-5 w-5 text-primary" />
                 <div>
-                  <div className="text-sm text-muted-foreground">官方网站</div>
+                  <div className="text-sm text-muted-foreground">{t('detail.website')}</div>
                   <a 
                     href={tool.website_url} 
                     target="_blank" 
@@ -339,12 +343,12 @@ const ToolDetail = () => {
                     {tool.category.icon || '📁'}
                   </div>
                   <div>
-                    <div className="text-sm text-muted-foreground">分类</div>
+                    <div className="text-sm text-muted-foreground">{t('detail.category')}</div>
                     <Link 
                       to={`/category/${tool.category.slug}`}
                       className="text-sm font-medium hover:text-primary"
                     >
-                      {tool.category.name}
+                      {categoryName(tool.category.slug, tool.category.name)}
                     </Link>
                   </div>
                 </div>
@@ -352,8 +356,8 @@ const ToolDetail = () => {
               <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
                 <Eye className="h-5 w-5 text-primary" />
                 <div>
-                  <div className="text-sm text-muted-foreground">浏览量</div>
-                  <div className="text-sm font-medium">{tool.view_count || 0} 次</div>
+                  <div className="text-sm text-muted-foreground">{t('detail.viewCount')}</div>
+                  <div className="text-sm font-medium">{t('detail.times', { count: tool.view_count || 0 })}</div>
                 </div>
               </div>
             </div>
@@ -365,7 +369,7 @@ const ToolDetail = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5" />
-              用户评价 ({comments?.length || 0})
+              {t('detail.comments', { count: comments?.length || 0 })}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -373,7 +377,7 @@ const ToolDetail = () => {
             {user ? (
               <div className="space-y-4 pb-6 border-b">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm">评分：</span>
+                  <span className="text-sm">{t('detail.rating')}</span>
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
@@ -392,7 +396,7 @@ const ToolDetail = () => {
                   ))}
                 </div>
                 <Textarea
-                  placeholder="分享你的使用体验..."
+                  placeholder={t('detail.commentPlaceholder')}
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                 />
@@ -400,14 +404,14 @@ const ToolDetail = () => {
                   onClick={() => submitComment.mutate()}
                   disabled={submitComment.isPending}
                 >
-                  发表评论
+                  {t('detail.submitComment')}
                 </Button>
               </div>
             ) : (
               <div className="text-center py-4 border-b">
-                <p className="text-muted-foreground mb-2">登录后可以发表评论</p>
+                <p className="text-muted-foreground mb-2">{t('detail.loginToComment')}</p>
                 <Button asChild variant="outline">
-                  <Link to="/login">去登录</Link>
+                  <Link to="/login">{t('detail.goLogin')}</Link>
                 </Button>
               </div>
             )}
@@ -425,7 +429,7 @@ const ToolDetail = () => {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-medium">
-                          {c.profile?.username || '匿名用户'}
+                          {c.profile?.username || t('detail.anonymous')}
                         </span>
                         {c.rating && (
                           <div className="flex">
@@ -452,7 +456,7 @@ const ToolDetail = () => {
                 ))
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
-                  暂无评论，来发表第一条评论吧
+                  {t('detail.noComments')}
                 </div>
               )}
             </div>

@@ -6,7 +6,7 @@ import { ToolCard } from '@/components/tools/ToolCard';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Category, AiTool } from '@/types/database';
-import { useLanguage, useCategoryName } from '@/contexts/LanguageContext';
+import { useLanguage, useCategoryName, useCategoryDescription } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 
 // 分类图标映射
@@ -43,6 +43,7 @@ interface CategoryWithTools extends Category {
 export const CategorySection = () => {
   const { t } = useLanguage();
   const categoryName = useCategoryName();
+  const categoryDesc = useCategoryDescription();
 
   const { data: categories, isLoading } = useQuery({
     queryKey: ['categories-with-tools'],
@@ -156,9 +157,9 @@ export const CategorySection = () => {
                       <h3 className="text-xl font-bold text-foreground">
                         {categoryName(category.slug, category.name)}
                       </h3>
-                      {category.description && (
+                      {categoryDesc(category.slug, category.description) && (
                         <p className="text-sm text-muted-foreground mt-0.5">
-                          {category.description}
+                          {categoryDesc(category.slug, category.description)}
                         </p>
                       )}
                     </div>

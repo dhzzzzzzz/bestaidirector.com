@@ -8,7 +8,7 @@ import { useToolsCount, formatToolsCount } from '@/hooks/useToolsCount';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export const HeroSearch = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ export const HeroSearch = () => {
 
   const popularSearches = [
     { name: 'ChatGPT', icon: '💬' },
-    { name: '文心一言', icon: '🤖' },
+    { name: language === 'zh' ? '文心一言' : 'ERNIE Bot', icon: '🤖' },
     { name: 'Midjourney', icon: '🎨' },
     { name: 'Claude', icon: '🧠' },
     { name: 'Stable Diffusion', icon: '🖼️' },

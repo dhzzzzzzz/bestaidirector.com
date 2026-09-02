@@ -6,7 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
+import { zhCN, enUS, ja, ko } from 'date-fns/locale';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AiNews {
@@ -19,10 +19,16 @@ interface AiNews {
   published_at: string;
   is_hot: boolean;
   created_at: string;
+  title_en?: string | null;
+  title_ja?: string | null;
+  title_ko?: string | null;
+  summary_en?: string | null;
+  summary_ja?: string | null;
+  summary_ko?: string | null;
 }
 
 export const NewsSidebar = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const { data: news, isLoading } = useQuery({
     queryKey: ['ai-news'],
@@ -39,14 +45,20 @@ export const NewsSidebar = () => {
     refetchInterval: 5 * 60 * 1000, // 每5分钟刷新一次
   });
 
+  const localized = (item: AiNews, field: 'title' | 'summary') => {
+    if (language === 'zh') return item[field];
+    return (item as any)[`${field}_${language}`] || item[field];
+  };
+
   const formatTime = (dateString: string) => {
     try {
-      return formatDistanceToNow(new Date(dateString), { 
-        addSuffix: true, 
-        locale: zhCN 
+      const locales: Record<string, typeof enUS> = { zh: zhCN, en: enUS, ja, ko };
+      return formatDistanceToNow(new Date(dateString), {
+        addSuffix: true,
+        locale: locales[language] || enUS,
       });
     } catch {
-      return '刚刚';
+      return t('news.justNow');
     }
   };
 
@@ -119,14 +131,14 @@ export const NewsSidebar = () => {
                     "text-sm font-medium leading-snug line-clamp-2 group-hover:text-primary transition-colors",
                     item.is_hot && "text-destructive"
                   )}>
-                    {item.title}
+                    {localized(item, 'title')}
                   </h4>
                 </div>
 
                 {/* Summary */}
-                {item.summary && (
+                {localized(item, 'summary') && (
                   <p className="text-xs text-muted-foreground line-clamp-2 mb-1.5">
-                    {item.summary}
+                    {localized(item, 'summary')}
                   </p>
                 )}
 

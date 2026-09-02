@@ -22,9 +22,18 @@ export type Database = {
           is_hot: boolean | null
           published_at: string
           source: string | null
+          source_en: string | null
+          source_ja: string | null
+          source_ko: string | null
           source_url: string | null
           summary: string | null
+          summary_en: string | null
+          summary_ja: string | null
+          summary_ko: string | null
           title: string
+          title_en: string | null
+          title_ja: string | null
+          title_ko: string | null
           updated_at: string
         }
         Insert: {
@@ -34,9 +43,18 @@ export type Database = {
           is_hot?: boolean | null
           published_at?: string
           source?: string | null
+          source_en?: string | null
+          source_ja?: string | null
+          source_ko?: string | null
           source_url?: string | null
           summary?: string | null
+          summary_en?: string | null
+          summary_ja?: string | null
+          summary_ko?: string | null
           title: string
+          title_en?: string | null
+          title_ja?: string | null
+          title_ko?: string | null
           updated_at?: string
         }
         Update: {
@@ -46,9 +64,18 @@ export type Database = {
           is_hot?: boolean | null
           published_at?: string
           source?: string | null
+          source_en?: string | null
+          source_ja?: string | null
+          source_ko?: string | null
           source_url?: string | null
           summary?: string | null
+          summary_en?: string | null
+          summary_ja?: string | null
+          summary_ko?: string | null
           title?: string
+          title_en?: string | null
+          title_ja?: string | null
+          title_ko?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -70,6 +97,9 @@ export type Database = {
           is_hot: boolean | null
           logo_url: string | null
           name: string
+          name_en: string | null
+          name_ja: string | null
+          name_ko: string | null
           rating_avg: number | null
           rating_count: number | null
           tags: string[] | null
@@ -93,6 +123,9 @@ export type Database = {
           is_hot?: boolean | null
           logo_url?: string | null
           name: string
+          name_en?: string | null
+          name_ja?: string | null
+          name_ko?: string | null
           rating_avg?: number | null
           rating_count?: number | null
           tags?: string[] | null
@@ -116,6 +149,9 @@ export type Database = {
           is_hot?: boolean | null
           logo_url?: string | null
           name?: string
+          name_en?: string | null
+          name_ja?: string | null
+          name_ko?: string | null
           rating_avg?: number | null
           rating_count?: number | null
           tags?: string[] | null
@@ -257,6 +293,30 @@ export type Database = {
           updated_at?: string
           user_id?: string
           username?: string | null
+        }
+        Relationships: []
+      }
+      tag_translations: {
+        Row: {
+          created_at: string
+          en: string | null
+          ja: string | null
+          ko: string | null
+          tag: string
+        }
+        Insert: {
+          created_at?: string
+          en?: string | null
+          ja?: string | null
+          ko?: string | null
+          tag: string
+        }
+        Update: {
+          created_at?: string
+          en?: string | null
+          ja?: string | null
+          ko?: string | null
+          tag?: string
         }
         Relationships: []
       }

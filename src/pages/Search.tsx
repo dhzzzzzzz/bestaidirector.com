@@ -38,7 +38,7 @@ const Search = () => {
       const { data, error } = await supabase
         .from('ai_tools')
         .select('*')
-        .or(`name.ilike.%${sanitizedQuery}%,description.ilike.%${sanitizedQuery}%`)
+        .or(`name.ilike.%${sanitizedQuery}%,name_en.ilike.%${sanitizedQuery}%,name_ja.ilike.%${sanitizedQuery}%,name_ko.ilike.%${sanitizedQuery}%,description.ilike.%${sanitizedQuery}%,description_en.ilike.%${sanitizedQuery}%,description_ja.ilike.%${sanitizedQuery}%,description_ko.ilike.%${sanitizedQuery}%`)
         .order('view_count', { ascending: false })
         .limit(50);
 

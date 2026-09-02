@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { AiTool } from '@/types/database';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export type FilterOption = {
   key: string;
@@ -188,6 +189,7 @@ export const ToolFilter = ({
   showAdvanced = true,
   tools
 }: ToolFilterProps) => {
+  const { t } = useLanguage();
   const [isExpanded, setIsExpanded] = useState(false);
   
   const hasActiveFilters = Object.values(activeFilters).some(v => v !== null);
@@ -218,7 +220,7 @@ export const ToolFilter = ({
       <div key={groupKey} className="flex items-center gap-1.5 flex-wrap">
         <span className="text-xs text-muted-foreground hidden sm:inline-flex items-center gap-1">
           {group.icon}
-          {group.label}:
+          {t(`filter.group.${groupKey}`)}:
         </span>
         <div className="flex gap-1 flex-wrap">
           {group.options.map((option) => {
@@ -236,7 +238,7 @@ export const ToolFilter = ({
                 )}
               >
                 {option.icon}
-                <span className="hidden sm:inline">{option.label}</span>
+                <span className="hidden sm:inline">{t(`filter.opt.${option.key}`)}</span>
                 {count !== undefined && (
                   <Badge variant={isActive ? 'secondary' : 'outline'} className="ml-0.5 h-4 min-w-[1.25rem] px-1 text-[10px] font-medium">
                     {count}
@@ -259,10 +261,10 @@ export const ToolFilter = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm font-medium">
           <Filter className="h-4 w-4 text-primary" />
-          <span>智能筛选</span>
+          <span>{t('filter.title')}</span>
           {activeCount > 0 && (
             <Badge variant="secondary" className="text-xs">
-              {activeCount} 个条件
+              {t('filter.conditions', { count: activeCount })}
             </Badge>
           )}
         </div>
@@ -271,7 +273,7 @@ export const ToolFilter = ({
           {hasActiveFilters && (
             <>
               <Badge variant="outline" className="text-xs font-medium">
-                {filteredCount !== undefined ? `找到 ${filteredCount} 个` : '已筛选'}
+                {filteredCount !== undefined ? t('filter.found', { count: filteredCount }) : t('filter.filtered')}
               </Badge>
               <Button
                 variant="ghost"
@@ -280,7 +282,7 @@ export const ToolFilter = ({
                 className="h-7 text-xs px-2 text-muted-foreground hover:text-foreground gap-1"
               >
                 <X className="h-3 w-3" />
-                清除全部
+                {t('filter.clearAll')}
               </Button>
             </>
           )}
@@ -307,12 +309,12 @@ export const ToolFilter = ({
               {isExpanded ? (
                 <>
                   <ChevronUp className="h-3.5 w-3.5" />
-                  收起高级筛选
+                  {t('filter.collapse')}
                 </>
               ) : (
                 <>
                   <ChevronDown className="h-3.5 w-3.5" />
-                  展开高级筛选 (分类、场景、平台、厂商)
+                  {t('filter.expand')}
                 </>
               )}
             </Button>
@@ -326,7 +328,7 @@ export const ToolFilter = ({
                   <div key={groupKey} className="p-3 bg-background/50 rounded-lg border border-border/50">
                     <div className="flex items-center gap-1.5 mb-2 text-xs font-medium text-muted-foreground">
                       {group.icon}
-                      {group.label}
+                      {t(`filter.group.${groupKey}`)}
                     </div>
                     <div className="flex gap-1 flex-wrap">
                       {group.options.map((option) => {
@@ -344,7 +346,7 @@ export const ToolFilter = ({
                             )}
                           >
                             {option.icon}
-                            {option.label}
+                            {t(`filter.opt.${option.key}`)}
                             {count !== undefined && (
                               <Badge variant={isActive ? 'secondary' : 'outline'} className="ml-0.5 h-4 min-w-[1.25rem] px-1 text-[10px] font-medium">
                                 {count}

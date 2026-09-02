@@ -50,7 +50,7 @@ const CategoryCard = ({ ranking }: { ranking: CategoryRanking }) => {
   const { t } = useLanguage();
   const categoryName = useCategoryName();
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
-  const { getDescription } = useTranslatedDescription();
+  const { getDescription, getName } = useTranslatedDescription();
 
   return (
     <div>
@@ -84,21 +84,21 @@ const CategoryCard = ({ ranking }: { ranking: CategoryRanking }) => {
                   {tool.logo_url && !imgErrors[tool.id] ? (
                     <img
                       src={tool.logo_url}
-                      alt={tool.name}
+                      alt={getName(tool)}
                       loading="lazy"
                       className="h-6 w-6 object-contain"
                       onError={() => setImgErrors(prev => ({ ...prev, [tool.id]: true }))}
                     />
                   ) : (
                     <span className={cn("text-sm font-bold", medal.text)}>
-                      {tool.name.charAt(0).toUpperCase()}
+                      {getName(tool).charAt(0).toUpperCase()}
                     </span>
                   )}
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold text-sm text-foreground truncate group-hover:text-primary transition-colors">
-                    {tool.name}
+                    {getName(tool)}
                   </div>
                   <p className="text-xs text-muted-foreground truncate mt-0.5">
                     {getDescription(tool)}

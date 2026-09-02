@@ -5,7 +5,7 @@ import { Layout } from '@/components/layout/Layout';
 import { ToolCard } from '@/components/tools/ToolCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ToolFilter, ActiveFilters, filterTools } from '@/components/tools/ToolFilter';
-import { useLanguage, useCategoryName } from '@/contexts/LanguageContext';
+import { useLanguage, useCategoryName, useCategoryDescription } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Category as CategoryType, AiTool } from '@/types/database';
 
@@ -31,6 +31,7 @@ const categoryIcons: Record<string, string> = {
 const Category = () => {
   const { t } = useLanguage();
   const categoryName = useCategoryName();
+  const categoryDesc = useCategoryDescription();
 
   const { slug } = useParams<{ slug: string }>();
   const [activeFilters, setActiveFilters] = useState<ActiveFilters>({
@@ -95,9 +96,9 @@ const Category = () => {
             <div className="flex items-center gap-3 mb-6">
               <span className="text-3xl">{categoryIcons[category.slug] || '📁'}</span>
               <div>
-                <h1 className="text-2xl font-bold">{category.name}</h1>
-                {category.description && (
-                  <p className="text-muted-foreground">{category.description}</p>
+                <h1 className="text-2xl font-bold">{categoryName(category.slug, category.name)}</h1>
+                {categoryDesc(category.slug, category.description) && (
+                  <p className="text-muted-foreground">{categoryDesc(category.slug, category.description)}</p>
                 )}
               </div>
             </div>

@@ -8,6 +8,7 @@ import { AiTool } from '@/types/database';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useToolsCount, formatToolsCount } from '@/hooks/useToolsCount';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface RecommendedTool extends AiTool {
   recommendation_reason?: string;
@@ -22,22 +23,18 @@ interface SmartSearchResult {
 }
 
 export const SmartSearch = () => {
+  const { t } = useLanguage();
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<SmartSearchResult | null>(null);
   const { data: toolsCount } = useToolsCount();
   const formattedCount = formatToolsCount(toolsCount);
 
-  const exampleQueries = [
-    '我想做短视频，需要AI帮我生成脚本、配音和剪辑',
-    '帮我找一些免费的AI绘画工具，最好不需要翻墙',
-    '我是程序员，想提高编程效率，有什么AI工具推荐？',
-    '我需要AI帮我处理Excel数据和生成报告',
-  ];
+  const exampleQueries = [t('smart.ex1'), t('smart.ex2'), t('smart.ex3'), t('smart.ex4')];
 
   const handleSearch = async () => {
     if (!query.trim()) {
-      toast.error('请输入您的需求描述');
+      toast.error(t('smart.emptyInput'));
       return;
     }
 
@@ -61,7 +58,7 @@ export const SmartSearch = () => {
       setResult(data);
     } catch (error) {
       console.error('Smart search error:', error);
-      toast.error('推荐服务暂时不可用，请稍后重试');
+      toast.error(t('smart.error'));
     } finally {
       setIsLoading(false);
     }
@@ -91,13 +88,13 @@ export const SmartSearch = () => {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="描述您的需求，AI将为您推荐最合适的工具...&#10;例如：我想用AI生成营销文案和图片"
+              placeholder={t('smart.placeholder')}
               className="min-h-[80px] resize-none border-0 p-0 focus-visible:ring-0 bg-transparent text-base"
               disabled={isLoading}
             />
             <div className="flex items-center justify-between mt-3">
               <p className="text-xs text-muted-foreground">
-                按 Enter 发送，Shift + Enter 换行
+                {t('smart.hint')}
               </p>
               <Button
                 onClick={handleSearch}
@@ -107,12 +104,12 @@ export const SmartSearch = () => {
                 {isLoading ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    AI分析中...
+                    {t('smart.analyzing')}
                   </>
                 ) : (
                   <>
                     <Sparkles className="h-4 w-4" />
-                    智能推荐
+                    {t('smart.submit')}
                   </>
                 )}
               </Button>
@@ -123,7 +120,7 @@ export const SmartSearch = () => {
         {/* Example Queries */}
         {!result && !isLoading && (
           <div className="mt-4">
-            <p className="text-sm text-muted-foreground mb-2">💡 试试这些例子：</p>
+            <p className="text-sm text-muted-foreground mb-2">💡 {t('smart.examples')}</p>
             <div className="flex flex-wrap gap-2">
               {exampleQueries.map((example, index) => (
                 <button
@@ -152,8 +149,8 @@ export const SmartSearch = () => {
             </div>
             <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary animate-ping" />
           </div>
-          <p className="mt-4 text-muted-foreground">AI正在分析您的需求...</p>
-          <p className="text-sm text-muted-foreground/60">正在从{formattedCount}工具中筛选最匹配的推荐</p>
+          <p className="mt-4 text-muted-foreground">{t('smart.loading')}</p>
+          <p className="text-sm text-muted-foreground/60">{t('smart.loadingDesc', { count: formattedCount })}</p>
         </div>
       )}
 
@@ -165,7 +162,7 @@ export const SmartSearch = () => {
             <Sparkles className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
             <div>
               <p className="font-medium text-foreground">
-                为您找到 {result.recommendations.length} 个推荐
+                {t('smart.found', { count: result.recommendations.length })}
               </p>
               <p className="text-sm text-muted-foreground mt-1">
                 {result.summary}
@@ -184,7 +181,7 @@ export const SmartSearch = () => {
                 {/* Recommendation Badge */}
                 <div className="absolute -top-2 -left-2 z-10 flex items-center gap-1 px-2 py-1 rounded-full bg-primary text-primary-foreground text-xs font-medium shadow-lg">
                   <Sparkles className="h-3 w-3" />
-                  推荐 {index + 1}
+                  {t('smart.rec', { index: index + 1 })}
                 </div>
                 
                 <div className="pt-2">
@@ -215,7 +212,7 @@ export const SmartSearch = () => {
               className="gap-2"
             >
               <Send className="h-4 w-4" />
-              重新描述需求
+              {t('smart.retry')}
             </Button>
           </div>
         </div>
@@ -228,14 +225,14 @@ export const SmartSearch = () => {
             <Bot className="h-8 w-8 text-muted-foreground" />
           </div>
           <p className="text-muted-foreground">
-            {result.error || '未找到匹配的工具，请尝试换一种方式描述您的需求'}
+            {result.error || t('smart.noResult')}
           </p>
           <Button
             variant="outline"
             onClick={() => setResult(null)}
             className="mt-4"
           >
-            重新搜索
+            {t('smart.searchAgain')}
           </Button>
         </div>
       )}
