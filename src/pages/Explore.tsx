@@ -14,6 +14,8 @@ import { AiTool, Category } from '@/types/database';
 import { cn } from '@/lib/utils';
 
 const ExplorePage = () => {
+  const { t } = useLanguage();
+  const categoryName = useCategoryName();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<ActiveFilters>({});
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');

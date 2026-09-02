@@ -6,7 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useTranslatedDescription } from '@/hooks/useTranslatedTool';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useLanguage, useCategoryName } from '@/contexts/LanguageContext';
 
 interface RankedTool {
   id: string;
@@ -47,6 +47,8 @@ const rankMedals = [
 ];
 
 const CategoryCard = ({ ranking }: { ranking: CategoryRanking }) => {
+  const { t } = useLanguage();
+  const categoryName = useCategoryName();
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
   const { getDescription } = useTranslatedDescription();
 
@@ -56,7 +58,7 @@ const CategoryCard = ({ ranking }: { ranking: CategoryRanking }) => {
       <div className="flex items-center justify-between pb-3 mb-2 border-b border-border/60">
         <div className="flex items-center gap-2.5">
           <span className="text-2xl">{ranking.icon}</span>
-          <h3 className="font-bold text-lg text-foreground">{ranking.name}</h3>
+          <h3 className="font-bold text-lg text-foreground">{categoryName(ranking.slug, ranking.name)}</h3>
         </div>
         <Link
           to={`/category/${ranking.slug}`}
@@ -129,6 +131,7 @@ const CategoryCard = ({ ranking }: { ranking: CategoryRanking }) => {
 };
 
 export const OscarRankings = () => {
+  const { t } = useLanguage();
   const { data: rankings, isLoading } = useQuery({
     queryKey: ['oscar-rankings'],
     queryFn: async () => {
