@@ -32,13 +32,13 @@ const Login = () => {
     if (error) {
       toast({
         variant: 'destructive',
-        title: '登录失败',
+        title: t('auth.loginFailed'),
         description: error.message,
       });
     } else {
       toast({
-        title: '登录成功',
-        description: '欢迎回来！',
+        title: t('auth.loginSuccess'),
+        description: t('auth.welcomeBack'),
       });
       navigate(redirectTo);
     }

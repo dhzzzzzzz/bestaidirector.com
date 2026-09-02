@@ -8,6 +8,7 @@ import { AiTool } from '@/types/database';
 import { cn } from '@/lib/utils';
 import { useTranslatedDescription } from '@/hooks/useTranslatedTool';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTagTranslations } from '@/hooks/useTagTranslations';
 
 interface ToolCardProps {
   tool: AiTool;
@@ -25,7 +26,8 @@ export const ToolCard = ({
   const { t } = useLanguage();
   const [imgError, setImgError] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
-  const { getDescription } = useTranslatedDescription();
+  const { getDescription, getName } = useTranslatedDescription();
+  const { translateTag } = useTagTranslations();
 
   return (
     <Card className="group relative overflow-hidden transition-all duration-300 hover:shadow-md hover:border-primary/30 hover:-translate-y-0.5 border-border/60 bg-card">
@@ -44,7 +46,7 @@ export const ToolCard = ({
                   )}
                   <img
                     src={tool.logo_url}
-                    alt={tool.name}
+                    alt={getName(tool)}
                     loading="lazy"
                     decoding="async"
                     className={cn(
@@ -58,7 +60,7 @@ export const ToolCard = ({
               ) : (
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
                   <span className="text-lg font-bold text-primary-foreground">
-                    {tool.name.charAt(0).toUpperCase()}
+                    {getName(tool).charAt(0).toUpperCase()}
                   </span>
                 </div>
               )}
@@ -72,7 +74,7 @@ export const ToolCard = ({
                 to={`/tool/${tool.id}`}
                 className="font-semibold text-foreground hover:text-primary transition-colors truncate text-base"
               >
-                {tool.name}
+                {getName(tool)}
               </Link>
               {tool.is_hot && (
                 <Badge variant="outline" className="shrink-0 text-xs px-1.5 py-0 h-5 font-normal border-primary/40 text-primary bg-primary/5">
@@ -110,7 +112,7 @@ export const ToolCard = ({
                   variant="secondary" 
                   className="text-xs px-2 py-0.5 bg-secondary/50 hover:bg-secondary transition-colors"
                 >
-                  {tag}
+                  {translateTag(tag)}
                 </Badge>
               ))}
             </div>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +21,7 @@ const Register = () => {
   const nextParam = searchParams.get('next');
   const redirectTo = nextParam && nextParam.startsWith('/') && !nextParam.startsWith('//') ? nextParam : '/';
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,8 +29,8 @@ const Register = () => {
     if (password !== confirmPassword) {
       toast({
         variant: 'destructive',
-        title: '密码不匹配',
-        description: '请确保两次输入的密码相同',
+        title: t('auth.pwdMismatch'),
+        description: t('auth.pwdMismatchDesc'),
       });
       return;
     }
@@ -36,8 +38,8 @@ const Register = () => {
     if (password.length < 6) {
       toast({
         variant: 'destructive',
-        title: '密码太短',
-        description: '密码至少需要6个字符',
+        title: t('auth.pwdShort'),
+        description: t('auth.pwdShortDesc'),
       });
       return;
     }
@@ -49,13 +51,13 @@ const Register = () => {
     if (error) {
       toast({
         variant: 'destructive',
-        title: '注册失败',
+        title: t('auth.registerFailed'),
         description: error.message,
       });
     } else {
       toast({
-        title: '注册成功',
-        description: '欢迎加入！',
+        title: t('auth.registerSuccess'),
+        description: t('auth.welcome'),
       });
       navigate(redirectTo);
     }
@@ -68,13 +70,13 @@ const Register = () => {
       <div className="container flex items-center justify-center py-16">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">注册账户</CardTitle>
-            <CardDescription>创建一个新账户以收藏和评论AI工具</CardDescription>
+            <CardTitle className="text-2xl">{t('auth.registerTitle')}</CardTitle>
+            <CardDescription>{t('auth.registerDesc')}</CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">邮箱</Label>
+                <Label htmlFor="email">{t('auth.email')}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -85,7 +87,7 @@ const Register = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">密码</Label>
+                <Label htmlFor="password">{t('auth.password')}</Label>
                 <Input
                   id="password"
                   type="password"
@@ -96,7 +98,7 @@ const Register = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">确认密码</Label>
+                <Label htmlFor="confirmPassword">{t('auth.confirmPassword')}</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
@@ -110,12 +112,12 @@ const Register = () => {
             <CardFooter className="flex flex-col gap-4">
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                注册
+                {t('auth.registerBtn')}
               </Button>
               <p className="text-sm text-muted-foreground">
-                已有账户？{' '}
+                {t('auth.haveAccount')}{' '}
                 <Link to="/login" className="text-primary hover:underline">
-                  立即登录
+                  {t('auth.goLogin')}
                 </Link>
               </p>
             </CardFooter>

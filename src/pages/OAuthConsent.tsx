@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 type OAuthNamespace = {
   getAuthorizationDetails: (id: string) => Promise<{ data: any; error: any }>;
@@ -13,6 +14,7 @@ type OAuthNamespace = {
 const oauth = () => (supabase.auth as unknown as { oauth: OAuthNamespace }).oauth;
 
 export default function OAuthConsent() {
+  const { t } = useLanguage();
   const [params] = useSearchParams();
   const authorizationId = params.get("authorization_id") ?? "";
   const [details, setDetails] = useState<any>(null);
@@ -74,29 +76,29 @@ export default function OAuthConsent() {
       <div className="w-full max-w-md rounded-xl border bg-card p-8">
         {error ? (
           <>
-            <h1 className="text-xl font-semibold mb-2">授权请求无法加载</h1>
+            <h1 className="text-xl font-semibold mb-2">{t('oauth.loadFailed')}</h1>
             <p className="text-sm text-muted-foreground">{error}</p>
           </>
         ) : !details ? (
           <div className="flex items-center gap-2 text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin" />
-            正在加载授权请求…
+            {t('oauth.loading')}
           </div>
         ) : (
           <>
             <h1 className="text-xl font-semibold mb-2">
-              将 {details.client?.name ?? "该应用"} 连接到你的账户
+              {t('oauth.connect', { app: details.client?.name ?? t('oauth.thisApp') })}
             </h1>
             <p className="text-sm text-muted-foreground mb-6">
-              授权后，{details.client?.name ?? "该客户端"} 可以以你的身份访问 AI 宝藏指南 的工具数据与收藏。
+              {t('oauth.desc', { app: details.client?.name ?? t('oauth.thisApp') })}
             </p>
             <div className="flex gap-3">
               <Button disabled={busy} onClick={() => decide(true)} className="flex-1">
                 {busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                同意授权
+                {t('oauth.approve')}
               </Button>
               <Button variant="outline" disabled={busy} onClick={() => decide(false)} className="flex-1">
-                拒绝
+                {t('oauth.deny')}
               </Button>
             </div>
           </>

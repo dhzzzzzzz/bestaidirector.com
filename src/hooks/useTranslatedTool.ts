@@ -7,20 +7,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 export const useTranslatedDescription = () => {
   const { language } = useLanguage();
 
-  const getDescription = (tool: any): string => {
-    if (language === 'zh') return tool.description || '暂无描述';
-    
-    const langKey = `description_${language}`;
-    return tool[langKey] || tool.description || 'No description';
-  };
-
-  const getDetailedDescription = (tool: any): string | null => {
-    if (language === 'zh') return tool.detailed_description || null;
-    
-    const langKey = `detailed_description_${language}`;
-    return tool[langKey] || tool.detailed_description || null;
-  };
-
   const getNoDescText = (): string => {
     const map: Record<string, string> = {
       zh: '暂无描述',
@@ -31,5 +17,24 @@ export const useTranslatedDescription = () => {
     return map[language] || '暂无描述';
   };
 
-  return { getDescription, getDetailedDescription, getNoDescText };
+  const getDescription = (tool: any): string => {
+    if (language === 'zh') return tool.description || '暂无描述';
+    
+    const langKey = `description_${language}`;
+    return tool[langKey] || getNoDescText();
+  };
+
+  const getDetailedDescription = (tool: any): string | null => {
+    if (language === 'zh') return tool.detailed_description || null;
+    
+    const langKey = `detailed_description_${language}`;
+    return tool[langKey] || null;
+  };
+
+  const getName = (tool: any): string => {
+    if (language === 'zh') return tool?.name || '';
+    return tool?.[`name_${language}`] || tool?.name || '';
+  };
+
+  return { getDescription, getDetailedDescription, getNoDescText, getName };
 };

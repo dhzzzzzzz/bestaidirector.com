@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Layout } from '@/components/layout/Layout';
 import { ToolCard } from '@/components/tools/ToolCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +13,7 @@ import { AiTool, Comment } from '@/types/database';
 import { Navigate } from 'react-router-dom';
 
 const Profile = () => {
+  const { t } = useLanguage();
   const { user, loading: authLoading } = useAuth();
 
   const { data: favorites, isLoading: favoritesLoading } = useQuery({
@@ -78,7 +80,7 @@ const Profile = () => {
             <div>
               <h1 className="text-2xl font-bold">{user.email}</h1>
               <p className="text-muted-foreground">
-                加入于 {new Date(user.created_at).toLocaleDateString()}
+                {t('profile.joined', { date: new Date(user.created_at).toLocaleDateString() })}
               </p>
             </div>
           </CardContent>
@@ -89,11 +91,11 @@ const Profile = () => {
           <TabsList className="mb-6">
             <TabsTrigger value="favorites" className="gap-2">
               <Heart className="h-4 w-4" />
-              我的收藏 ({favorites?.length || 0})
+              {t('profile.favorites', { count: favorites?.length || 0 })}
             </TabsTrigger>
             <TabsTrigger value="comments" className="gap-2">
               <MessageSquare className="h-4 w-4" />
-              我的评论 ({comments?.length || 0})
+              {t('profile.comments', { count: comments?.length || 0 })}
             </TabsTrigger>
           </TabsList>
 
@@ -113,7 +115,7 @@ const Profile = () => {
             ) : (
               <div className="text-center py-12 text-muted-foreground">
                 <Heart className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>暂无收藏的工具</p>
+                <p>{t('profile.noFavorites')}</p>
               </div>
             )}
           </TabsContent>
@@ -153,7 +155,7 @@ const Profile = () => {
             ) : (
               <div className="text-center py-12 text-muted-foreground">
                 <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>暂无评论</p>
+                <p>{t('profile.noComments')}</p>
               </div>
             )}
           </TabsContent>
