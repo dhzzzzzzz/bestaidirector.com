@@ -18,6 +18,7 @@ import AdminLayout from "./pages/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import Categories from "./pages/admin/Categories";
 import Tools from "./pages/admin/Tools";
+import OAuthConsent from "./pages/OAuthConsent";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +41,7 @@ const App = () => (
               <Route path="/category/:slug" element={<Category />} />
               <Route path="/tool/:id" element={<ToolDetail />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
               
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminLayout />}>
