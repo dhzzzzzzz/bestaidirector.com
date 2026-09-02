@@ -5,8 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useToolsCount, formatToolsCount } from '@/hooks/useToolsCount';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export const HeroSearch = () => {
+  const { t } = useLanguage();
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const navigate = useNavigate();
@@ -35,16 +37,16 @@ export const HeroSearch = () => {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border bg-muted/40 mb-6 animate-fade-in">
             <Sparkles className="h-3.5 w-3.5 text-primary" />
-            <span className="text-xs font-medium text-muted-foreground">发现 {formattedCount} 精选AI工具</span>
+            <span className="text-xs font-medium text-muted-foreground">{t('hero.badge', { count: formattedCount })}</span>
           </div>
 
           {/* Main heading — solid color, no gradient */}
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl mb-6 text-foreground animate-fade-in" style={{ animationDelay: '100ms' }}>
-            探索 AI 工具的无限可能
+            {t('hero.h1')}
           </h1>
 
           <p className="mt-4 text-base md:text-lg text-muted-foreground max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: '200ms' }}>
-            汇集全网优质 AI 工具，覆盖对话、绘画、视频、音频、写作、编程等多个领域
+            {t('hero.desc')}
           </p>
 
           {/* Search Form */}
@@ -58,7 +60,7 @@ export const HeroSearch = () => {
                 <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   type="search"
-                  placeholder="搜索AI工具名称、功能或分类..."
+                  placeholder={t('hero.placeholder')}
                   className="h-12 pl-12 pr-4 text-base border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
@@ -68,7 +70,7 @@ export const HeroSearch = () => {
               </div>
               <Button type="submit" size="lg" className="h-12 px-6 rounded-lg">
                 <Search className="h-4 w-4 mr-2" />
-                搜索
+                {t('hero.searchButton')}
               </Button>
             </div>
           </form>
@@ -78,7 +80,7 @@ export const HeroSearch = () => {
             <Link to="/smart-search">
               <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-primary group">
                 <Brain className="h-4 w-4" />
-                <span>不知道选什么？试试 AI 智能推荐</span>
+                <span>{t('hero.smartCta')}</span>
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
@@ -88,7 +90,7 @@ export const HeroSearch = () => {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-2 animate-fade-in" style={{ animationDelay: '400ms' }}>
             <span className="text-sm text-muted-foreground flex items-center gap-1.5 mr-1">
               <Bot className="h-4 w-4" />
-              热门：
+              {t('hero.popular')}
             </span>
             {popularSearches.map((item) => (
               <Button
@@ -107,9 +109,9 @@ export const HeroSearch = () => {
           {/* Stats */}
           <div className="mt-14 grid grid-cols-3 gap-8 max-w-lg mx-auto animate-fade-in" style={{ animationDelay: '600ms' }}>
             {[
-              { label: 'AI工具', value: formattedCount },
-              { label: '分类', value: '13+' },
-              { label: '每日更新', value: '20+' },
+              { label: t('hero.stats.tools'), value: formattedCount },
+              { label: t('hero.stats.categories'), value: '13+' },
+              { label: t('hero.stats.daily'), value: '20+' },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <div className="text-2xl md:text-3xl font-bold text-foreground tabular-nums">

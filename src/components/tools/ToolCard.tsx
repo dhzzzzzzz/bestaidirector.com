@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { AiTool } from '@/types/database';
 import { cn } from '@/lib/utils';
 import { useTranslatedDescription } from '@/hooks/useTranslatedTool';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ToolCardProps {
   tool: AiTool;
@@ -21,6 +22,7 @@ export const ToolCard = ({
   isFavorited = false,
   onToggleFavorite,
 }: ToolCardProps) => {
+  const { t } = useLanguage();
   const [imgError, setImgError] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
   const { getDescription } = useTranslatedDescription();
@@ -75,12 +77,12 @@ export const ToolCard = ({
               {tool.is_hot && (
                 <Badge variant="outline" className="shrink-0 text-xs px-1.5 py-0 h-5 font-normal border-primary/40 text-primary bg-primary/5">
                   <Sparkles className="h-3 w-3 mr-0.5" />
-                  热门
+                  {t('card.hot')}
                 </Badge>
               )}
               {tool.is_featured && (
                 <Badge variant="outline" className="shrink-0 text-xs px-1.5 py-0 h-5 font-normal border-border text-muted-foreground">
-                  ⭐ 精选
+                  {t('card.featured')}
                 </Badge>
               )}
             </div>

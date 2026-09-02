@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useTranslatedDescription } from '@/hooks/useTranslatedTool';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface RankedTool {
   id: string;
@@ -61,7 +62,7 @@ const CategoryCard = ({ ranking }: { ranking: CategoryRanking }) => {
           to={`/category/${ranking.slug}`}
           className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-0.5"
         >
-          查看全部 <ChevronRight className="h-3 w-3" />
+          {t('oscar.viewAll')} <ChevronRight className="h-3 w-3" />
         </Link>
       </div>
 
@@ -120,7 +121,7 @@ const CategoryCard = ({ ranking }: { ranking: CategoryRanking }) => {
         })}
 
         {ranking.tools.length === 0 && (
-          <li className="text-center py-6 text-sm text-muted-foreground">暂无排名数据</li>
+          <li className="text-center py-6 text-sm text-muted-foreground">{t('oscar.empty')}</li>
         )}
       </ul>
     </div>
@@ -175,13 +176,13 @@ export const OscarRankings = () => {
         <div className="flex flex-col items-center text-center mb-10">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border bg-muted/40 mb-4">
             <Trophy className="h-3.5 w-3.5 text-primary" />
-            <span className="text-xs font-medium text-muted-foreground">Oscar 排行榜</span>
+            <span className="text-xs font-medium text-muted-foreground">{t('oscar.badge')}</span>
           </div>
           <h2 className="text-3xl font-bold tracking-tight mb-2 text-foreground">
-            AI 工具 Oscar 排名
+            {t('oscar.title')}
           </h2>
           <p className="text-muted-foreground max-w-lg">
-            综合浏览量、评分和评价数等维度，为每个类别评选出最受欢迎的Top 3工具
+            {t('oscar.desc')}
           </p>
         </div>
 

@@ -6,6 +6,7 @@ import { ToolCard } from '@/components/tools/ToolCard';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Category, AiTool } from '@/types/database';
+import { useLanguage, useCategoryName } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 
 // 分类图标映射
@@ -40,6 +41,9 @@ interface CategoryWithTools extends Category {
 }
 
 export const CategorySection = () => {
+  const { t } = useLanguage();
+  const categoryName = useCategoryName();
+
   const { data: categories, isLoading } = useQuery({
     queryKey: ['categories-with-tools'],
     queryFn: async () => {
@@ -103,7 +107,7 @@ export const CategorySection = () => {
           <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-4">
             <Layers className="h-10 w-10 text-muted-foreground" />
           </div>
-          <p className="text-muted-foreground">暂无分类数据</p>
+          <p className="text-muted-foreground">{t('cat.noData')}</p>
         </div>
       </section>
     );
@@ -116,13 +120,13 @@ export const CategorySection = () => {
         <div className="flex flex-col items-center text-center mb-12">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border bg-muted/40 mb-4">
             <Layers className="h-3.5 w-3.5 text-primary" />
-            <span className="text-xs font-medium text-muted-foreground">全部分类</span>
+            <span className="text-xs font-medium text-muted-foreground">{t('cat.badge')}</span>
           </div>
           <h2 className="text-3xl font-bold tracking-tight mb-2 text-foreground">
-            按分类浏览 AI 工具
+            {t('cat.title')}
           </h2>
           <p className="text-muted-foreground max-w-lg">
-            覆盖对话、绘画、视频、音频、写作、编程等多个领域
+            {t('cat.desc')}
           </p>
         </div>
 
@@ -150,7 +154,7 @@ export const CategorySection = () => {
                     </div>
                     <div>
                       <h3 className="text-xl font-bold text-foreground">
-                        {category.name}
+                        {categoryName(category.slug, category.name)}
                       </h3>
                       {category.description && (
                         <p className="text-sm text-muted-foreground mt-0.5">
@@ -161,7 +165,7 @@ export const CategorySection = () => {
                   </div>
                   <Button variant="ghost" size="sm" asChild className="group text-muted-foreground hover:text-primary">
                     <Link to={`/category/${category.slug}`}>
-                      查看更多
+                      {t('cat.viewMore')}
                       <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
                   </Button>
@@ -183,7 +187,7 @@ export const CategorySection = () => {
                 ) : (
                   <div className="flex flex-col items-center justify-center py-12 rounded-xl border border-dashed border-border">
                     <span className="text-4xl mb-2">{categoryIcons[category.slug] || '📁'}</span>
-                    <p className="text-muted-foreground">该分类暂无工具</p>
+                    <p className="text-muted-foreground">{t('cat.emptyTools')}</p>
                   </div>
                 )}
               </div>

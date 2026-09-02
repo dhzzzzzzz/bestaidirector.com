@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AiNews {
   id: string;
@@ -21,6 +22,8 @@ interface AiNews {
 }
 
 export const NewsSidebar = () => {
+  const { t } = useLanguage();
+
   const { data: news, isLoading } = useQuery({
     queryKey: ['ai-news'],
     queryFn: async () => {
@@ -70,10 +73,10 @@ export const NewsSidebar = () => {
       <div className="sticky top-20">
         <div className="flex items-center gap-2 mb-4">
           <Newspaper className="h-5 w-5 text-primary" />
-          <h3 className="font-semibold">AI 资讯</h3>
+          <h3 className="font-semibold">{t('news.title')}</h3>
         </div>
         <p className="text-sm text-muted-foreground text-center py-8">
-          暂无新闻资讯
+          {t('news.empty')}
         </p>
       </div>
     );
@@ -85,11 +88,11 @@ export const NewsSidebar = () => {
       <div className="flex items-center justify-between mb-4 pb-3 border-b border-border/60">
         <div className="flex items-center gap-2">
           <Newspaper className="h-5 w-5 text-primary" />
-          <h3 className="font-bold text-lg">AI 资讯</h3>
+          <h3 className="font-bold text-lg">{t('news.title')}</h3>
         </div>
         <Badge variant="secondary" className="text-xs">
           <Clock className="h-3 w-3 mr-1" />
-          实时更新
+          {t('news.live')}
         </Badge>
       </div>
 
@@ -146,7 +149,7 @@ export const NewsSidebar = () => {
       {/* View More Link */}
       <div className="mt-4 pt-3 border-t border-border/40">
         <button className="w-full flex items-center justify-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors py-2">
-          查看更多资讯
+          {t('news.more')}
           <ChevronRight className="h-4 w-4" />
         </button>
       </div>

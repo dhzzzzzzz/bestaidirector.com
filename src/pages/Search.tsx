@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ToolFilter, ActiveFilters, filterTools } from '@/components/tools/ToolFilter';
 import { supabase } from '@/integrations/supabase/client';
 import { AiTool } from '@/types/database';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Sanitize search query to prevent SQL injection
 const sanitizeSearchQuery = (query: string): string => {
@@ -18,6 +19,8 @@ const sanitizeSearchQuery = (query: string): string => {
 };
 
 const Search = () => {
+  const { t } = useLanguage();
+
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
   const [activeFilters, setActiveFilters] = useState<ActiveFilters>({
@@ -57,7 +60,7 @@ const Search = () => {
         <div className="flex items-center gap-2 mb-6">
           <SearchIcon className="h-6 w-6" />
           <h1 className="text-2xl font-bold">
-            搜索结果：<span className="text-primary">{query}</span>
+            {t('result.title')}<span className="text-primary">{query}</span>
           </h1>
         </div>
 
@@ -80,7 +83,7 @@ const Search = () => {
         ) : filteredTools.length > 0 ? (
           <>
             <p className="text-muted-foreground mb-6">
-              共找到 {filteredTools.length} 个结果
+              {t('result.count', { count: filteredTools.length })}
             </p>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {filteredTools.map((tool) => (
@@ -91,9 +94,9 @@ const Search = () => {
         ) : (
           <div className="text-center py-16">
             <SearchIcon className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h2 className="text-xl font-semibold mb-2">未找到相关工具</h2>
+            <h2 className="text-xl font-semibold mb-2">{t('result.notFound')}</h2>
             <p className="text-muted-foreground">
-              尝试更换筛选条件或使用不同的关键词
+              {t('result.notFoundDesc')}
             </p>
           </div>
         )}
