@@ -37,7 +37,7 @@ export const Header = () => {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
             <span className="text-lg font-bold text-primary-foreground">AI</span>
           </div>
-          <span className="text-xl font-bold">AI导航</span>
+          <span className="text-xl font-bold">{t('brand.name')}</span>
         </Link>
 
         {/* Search Bar */}

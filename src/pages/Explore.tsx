@@ -8,11 +8,14 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useLanguage, useCategoryName } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { AiTool, Category } from '@/types/database';
 import { cn } from '@/lib/utils';
 
 const ExplorePage = () => {
+  const { t } = useLanguage();
+  const categoryName = useCategoryName();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<ActiveFilters>({});
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -109,13 +112,13 @@ const ExplorePage = () => {
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
             <SlidersHorizontal className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium">高级筛选</span>
+            <span className="text-sm font-medium">{t('explore.badge')}</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight mb-2">
-            探索 <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">AI工具库</span>
+            {t('explore.title')} <span className="text-primary">{t('explore.titleAccent')}</span>
           </h1>
           <p className="text-muted-foreground max-w-lg mx-auto">
-            从 {tools?.length || 0} 个AI工具中，通过多维度筛选找到最适合你的工具
+            {t('explore.desc', { count: tools?.length || 0 })}
           </p>
         </div>
 
@@ -125,7 +128,7 @@ const ExplorePage = () => {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="搜索工具名称、描述或标签..."
+              placeholder={t('explore.placeholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-12 h-12 text-base rounded-xl border-2 focus:border-primary"
@@ -137,7 +140,7 @@ const ExplorePage = () => {
                 className="absolute right-2 top-1/2 -translate-y-1/2"
                 onClick={() => setSearchQuery('')}
               >
-                清除
+                {t('explore.clear')}
               </Button>
             )}
           </div>
@@ -152,7 +155,7 @@ const ExplorePage = () => {
               onClick={() => setSelectedCategory(null)}
               className="rounded-full"
             >
-              全部分类
+              {t('explore.allCategories')}
             </Button>
             {categories.map(cat => (
               <Button
@@ -162,7 +165,7 @@ const ExplorePage = () => {
                 onClick={() => setSelectedCategory(selectedCategory === cat.slug ? null : cat.slug)}
                 className="rounded-full"
               >
-                {cat.name}
+                {categoryName(cat.slug, cat.name)}
               </Button>
             ))}
           </div>
@@ -184,10 +187,10 @@ const ExplorePage = () => {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-semibold">
-              搜索结果
+              {t('explore.results')}
             </h2>
             <Badge variant="secondary">
-              {filteredTools.length} 个工具
+              {t('explore.count', { count: filteredTools.length })}
             </Badge>
             {getActiveFilterSummary().length > 0 && (
               <div className="hidden sm:flex items-center gap-1">
@@ -254,16 +257,16 @@ const ExplorePage = () => {
             <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
               <Search className="h-10 w-10 text-muted-foreground" />
             </div>
-            <h3 className="text-xl font-semibold mb-2">未找到匹配的工具</h3>
+            <h3 className="text-xl font-semibold mb-2">{t('explore.noMatch')}</h3>
             <p className="text-muted-foreground mb-4">
-              尝试调整筛选条件或更换搜索关键词
+              {t('explore.noMatchDesc')}
             </p>
             <Button onClick={() => {
               setSearchQuery('');
               setSelectedCategory(null);
               setActiveFilters({});
             }}>
-              清除所有筛选
+              {t('explore.clearAll')}
             </Button>
           </div>
         )}
@@ -271,7 +274,7 @@ const ExplorePage = () => {
         {/* Popular Tags Section */}
         {!searchQuery && Object.keys(activeFilters).every(k => !activeFilters[k]) && (
           <div className="mt-12 pt-8 border-t">
-            <h3 className="text-lg font-semibold mb-4">热门标签</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('explore.hotTags')}</h3>
             <div className="flex flex-wrap gap-2">
               {Object.entries(tagStats)
                 .sort((a, b) => b[1] - a[1])

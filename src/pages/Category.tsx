@@ -5,6 +5,7 @@ import { Layout } from '@/components/layout/Layout';
 import { ToolCard } from '@/components/tools/ToolCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ToolFilter, ActiveFilters, filterTools } from '@/components/tools/ToolFilter';
+import { useLanguage, useCategoryName } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Category as CategoryType, AiTool } from '@/types/database';
 
@@ -28,6 +29,9 @@ const categoryIcons: Record<string, string> = {
 };
 
 const Category = () => {
+  const { t } = useLanguage();
+  const categoryName = useCategoryName();
+
   const { slug } = useParams<{ slug: string }>();
   const [activeFilters, setActiveFilters] = useState<ActiveFilters>({
     access: null,
@@ -111,7 +115,7 @@ const Category = () => {
             {filteredTools.length > 0 ? (
               <>
                 <p className="text-muted-foreground mb-6">
-                  共 {filteredTools.length} 个工具
+                  {t('cat.count', { count: filteredTools.length })}
                 </p>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {filteredTools.map((tool) => (
@@ -121,14 +125,14 @@ const Category = () => {
               </>
             ) : (
               <div className="text-center py-16 text-muted-foreground">
-                该筛选条件下暂无工具，请尝试其他筛选
+                {t('cat.emptyFilter')}
               </div>
             )}
           </>
         ) : (
           <div className="text-center py-16">
-            <h2 className="text-xl font-semibold mb-2">分类不存在</h2>
-            <p className="text-muted-foreground">请检查链接是否正确</p>
+            <h2 className="text-xl font-semibold mb-2">{t('cat.notFound')}</h2>
+            <p className="text-muted-foreground">{t('cat.notFoundDesc')}</p>
           </div>
         )}
       </div>

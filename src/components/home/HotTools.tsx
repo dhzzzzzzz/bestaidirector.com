@@ -8,6 +8,7 @@ import { ToolFilter, ActiveFilters, filterGroups } from '@/components/tools/Tool
 import { AiTool } from '@/types/database';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -32,6 +33,8 @@ const buildFilterQuery = (activeFilters: ActiveFilters) => {
 };
 
 export const HotTools = () => {
+  const { t } = useLanguage();
+
   const [activeFilters, setActiveFilters] = useState<ActiveFilters>({
     access: null,
     pricing: null,
@@ -171,13 +174,13 @@ export const HotTools = () => {
         <div className="flex flex-col items-center text-center mb-6">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border bg-muted/40 mb-4">
             <Flame className="h-3.5 w-3.5 text-primary" />
-            <span className="text-xs font-medium text-muted-foreground">热门推荐</span>
+            <span className="text-xs font-medium text-muted-foreground">{t('hot.badge')}</span>
           </div>
           <h2 className="text-3xl font-bold tracking-tight mb-2 text-foreground">
-            最受欢迎的 AI 工具
+            {t('hot.title')}
           </h2>
           <p className="text-muted-foreground max-w-lg">
-            精选用户评价最高、使用最多的AI工具，助你快速找到最适合的解决方案
+            {t('hot.desc')}
           </p>
         </div>
 
@@ -230,7 +233,7 @@ export const HotTools = () => {
                   className="h-9 px-3"
                 >
                   <ChevronLeft className="h-4 w-4" />
-                  <span className="hidden sm:inline ml-1">上一页</span>
+                  <span className="hidden sm:inline ml-1">{t('hot.prev')}</span>
                 </Button>
 
                 <div className="flex items-center gap-1">
@@ -261,12 +264,12 @@ export const HotTools = () => {
                   disabled={currentPage === totalPages}
                   className="h-9 px-3"
                 >
-                  <span className="hidden sm:inline mr-1">下一页</span>
+                  <span className="hidden sm:inline mr-1">{t('hot.next')}</span>
                   <ChevronRight className="h-4 w-4" />
                 </Button>
 
                 <span className="text-sm text-muted-foreground ml-2 hidden sm:inline">
-                  共 {totalCount} 个工具
+                  {t('hot.total', { count: totalCount })}
                 </span>
               </div>
             )}
@@ -277,7 +280,7 @@ export const HotTools = () => {
               <Sparkles className="h-10 w-10 text-muted-foreground" />
             </div>
             <p className="text-muted-foreground">
-              该筛选条件下暂无热门工具
+              {t('hot.empty')}
             </p>
           </div>
         )}
