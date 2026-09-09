@@ -1,0 +1,1 @@
+alter function public.match_ai_tools(vector, int, uuid[], text[], numeric) set search_path = public, extensions;

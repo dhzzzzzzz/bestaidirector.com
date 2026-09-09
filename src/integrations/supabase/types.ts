@@ -92,6 +92,9 @@ export type Database = {
           detailed_description_en: string | null
           detailed_description_ja: string | null
           detailed_description_ko: string | null
+          embedded_at: string | null
+          embedding: string | null
+          embedding_source: string | null
           id: string
           is_featured: boolean | null
           is_hot: boolean | null
@@ -118,6 +121,9 @@ export type Database = {
           detailed_description_en?: string | null
           detailed_description_ja?: string | null
           detailed_description_ko?: string | null
+          embedded_at?: string | null
+          embedding?: string | null
+          embedding_source?: string | null
           id?: string
           is_featured?: boolean | null
           is_hot?: boolean | null
@@ -144,6 +150,9 @@ export type Database = {
           detailed_description_en?: string | null
           detailed_description_ja?: string | null
           detailed_description_ko?: string | null
+          embedded_at?: string | null
+          embedding?: string | null
+          embedding_source?: string | null
           id?: string
           is_featured?: boolean | null
           is_hot?: boolean | null
@@ -369,6 +378,28 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      match_ai_tools: {
+        Args: {
+          filter_category_ids?: string[]
+          filter_tags?: string[]
+          match_count?: number
+          min_rating?: number
+          query_embedding: string
+        }
+        Returns: {
+          category_id: string
+          description: string
+          id: string
+          logo_url: string
+          name: string
+          rating_avg: number
+          rating_count: number
+          similarity: number
+          tags: string[]
+          view_count: number
+          website_url: string
+        }[]
       }
     }
     Enums: {
