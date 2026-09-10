@@ -404,6 +404,10 @@ const ToolDetail = () => {
             {/* Comment Form */}
             {user ? (
               <div className="space-y-4 pb-6 border-b">
+                <div>
+                  <p className="font-medium">{t('detail.shareExperience')}</p>
+                  <p className="text-sm text-muted-foreground">{t('detail.reviewHint')}</p>
+                </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm">{t('detail.rating')}</span>
                   {[1, 2, 3, 4, 5].map((star) => (
@@ -424,16 +428,20 @@ const ToolDetail = () => {
                   ))}
                 </div>
                 <Textarea
+                  ref={commentBoxRef}
                   placeholder={t('detail.commentPlaceholder')}
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                 />
-                <Button
-                  onClick={() => submitComment.mutate()}
-                  disabled={submitComment.isPending}
-                >
-                  {t('detail.submitComment')}
-                </Button>
+                <div className="flex items-center gap-3">
+                  <Button
+                    onClick={() => submitComment.mutate()}
+                    disabled={submitComment.isPending}
+                  >
+                    {t('detail.submitComment')}
+                  </Button>
+                  <span className="text-xs text-muted-foreground">{t('detail.reviewEncourage')}</span>
+                </div>
               </div>
             ) : (
               <div className="text-center py-4 border-b">
@@ -483,8 +491,15 @@ const ToolDetail = () => {
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  {t('detail.noComments')}
+                <div className="text-center py-10">
+                  <MessageSquare className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
+                  <p className="font-medium mb-1">{t('detail.noComments')}</p>
+                  <p className="text-sm text-muted-foreground mb-4">{t('detail.beFirstHint')}</p>
+                  {user && (
+                    <Button variant="outline" onClick={focusCommentBox}>
+                      {t('detail.writeFirst')}
+                    </Button>
+                  )}
                 </div>
               )}
             </div>
