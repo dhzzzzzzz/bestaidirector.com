@@ -15,7 +15,7 @@ import { useTagTranslations } from '@/hooks/useTagTranslations';
 import { useTranslatedDescription } from '@/hooks/useTranslatedTool';
 import { useLanguage, useCategoryName } from '@/contexts/LanguageContext';
 import { AiTool, Comment, Category } from '@/types/database';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
 
 const ToolDetail = () => {
@@ -25,6 +25,11 @@ const ToolDetail = () => {
   const queryClient = useQueryClient();
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(5);
+  const commentBoxRef = useRef<HTMLTextAreaElement>(null);
+  const focusCommentBox = () => {
+    commentBoxRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    commentBoxRef.current?.focus({ preventScroll: true });
+  };
   const { getDescription, getDetailedDescription, getName } = useTranslatedDescription();
   const { language, t } = useLanguage();
   const categoryName = useCategoryName();
@@ -141,6 +146,7 @@ const ToolDetail = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tool-comments', id] });
+      queryClient.invalidateQueries({ queryKey: ['tool', id] });
       setComment('');
       toast({ title: t('detail.commentSuccess') });
     },
@@ -228,7 +234,7 @@ const ToolDetail = () => {
 
               {/* Stats */}
               <div className="flex flex-wrap items-center gap-6 mb-5 text-sm">
-                {tool.rating_count > 0 && (
+                {tool.rating_count > 0 ? (
                   <div className="flex items-center gap-1.5">
                     <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                     <span className="font-semibold text-lg">{Number(tool.rating_avg).toFixed(1)}</span>
@@ -236,6 +242,14 @@ const ToolDetail = () => {
                       ({t('detail.reviews', { count: tool.rating_count })})
                     </span>
                   </div>
+                ) : (
+                  <button
+                    onClick={focusCommentBox}
+                    className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <Star className="h-5 w-5" />
+                    <span>{t('detail.notRated')}</span>
+                  </button>
                 )}
                 <div className="flex items-center gap-1.5 text-muted-foreground">
                   <Eye className="h-4 w-4" />
