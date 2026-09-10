@@ -15,7 +15,7 @@ import { useTagTranslations } from '@/hooks/useTagTranslations';
 import { useTranslatedDescription } from '@/hooks/useTranslatedTool';
 import { useLanguage, useCategoryName } from '@/contexts/LanguageContext';
 import { AiTool, Comment, Category } from '@/types/database';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { cn } from '@/lib/utils';
 
 const ToolDetail = () => {
@@ -25,6 +25,11 @@ const ToolDetail = () => {
   const queryClient = useQueryClient();
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(5);
+  const commentBoxRef = useRef<HTMLTextAreaElement>(null);
+  const focusCommentBox = () => {
+    commentBoxRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    commentBoxRef.current?.focus({ preventScroll: true });
+  };
   const { getDescription, getDetailedDescription, getName } = useTranslatedDescription();
   const { language, t } = useLanguage();
   const categoryName = useCategoryName();
@@ -141,6 +146,7 @@ const ToolDetail = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tool-comments', id] });
+      queryClient.invalidateQueries({ queryKey: ['tool', id] });
       setComment('');
       toast({ title: t('detail.commentSuccess') });
     },
@@ -228,7 +234,7 @@ const ToolDetail = () => {
 
               {/* Stats */}
               <div className="flex flex-wrap items-center gap-6 mb-5 text-sm">
-                {tool.rating_count > 0 && (
+                {tool.rating_count > 0 ? (
                   <div className="flex items-center gap-1.5">
                     <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                     <span className="font-semibold text-lg">{Number(tool.rating_avg).toFixed(1)}</span>
@@ -236,6 +242,14 @@ const ToolDetail = () => {
                       ({t('detail.reviews', { count: tool.rating_count })})
                     </span>
                   </div>
+                ) : (
+                  <button
+                    onClick={focusCommentBox}
+                    className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <Star className="h-5 w-5" />
+                    <span>{t('detail.notRated')}</span>
+                  </button>
                 )}
                 <div className="flex items-center gap-1.5 text-muted-foreground">
                   <Eye className="h-4 w-4" />
@@ -390,6 +404,10 @@ const ToolDetail = () => {
             {/* Comment Form */}
             {user ? (
               <div className="space-y-4 pb-6 border-b">
+                <div>
+                  <p className="font-medium">{t('detail.shareExperience')}</p>
+                  <p className="text-sm text-muted-foreground">{t('detail.reviewHint')}</p>
+                </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm">{t('detail.rating')}</span>
                   {[1, 2, 3, 4, 5].map((star) => (
@@ -410,16 +428,20 @@ const ToolDetail = () => {
                   ))}
                 </div>
                 <Textarea
+                  ref={commentBoxRef}
                   placeholder={t('detail.commentPlaceholder')}
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                 />
-                <Button
-                  onClick={() => submitComment.mutate()}
-                  disabled={submitComment.isPending}
-                >
-                  {t('detail.submitComment')}
-                </Button>
+                <div className="flex items-center gap-3">
+                  <Button
+                    onClick={() => submitComment.mutate()}
+                    disabled={submitComment.isPending}
+                  >
+                    {t('detail.submitComment')}
+                  </Button>
+                  <span className="text-xs text-muted-foreground">{t('detail.reviewEncourage')}</span>
+                </div>
               </div>
             ) : (
               <div className="text-center py-4 border-b">
@@ -469,8 +491,15 @@ const ToolDetail = () => {
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  {t('detail.noComments')}
+                <div className="text-center py-10">
+                  <MessageSquare className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
+                  <p className="font-medium mb-1">{t('detail.noComments')}</p>
+                  <p className="text-sm text-muted-foreground mb-4">{t('detail.beFirstHint')}</p>
+                  {user && (
+                    <Button variant="outline" onClick={focusCommentBox}>
+                      {t('detail.writeFirst')}
+                    </Button>
+                  )}
                 </div>
               )}
             </div>
