@@ -63,7 +63,7 @@ const ToolDetail = () => {
   });
 
   const { data: comments } = useQuery({
-    queryKey: ['tool-comments', id],
+    queryKey: ['tool-comments', id, language],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('comments')
