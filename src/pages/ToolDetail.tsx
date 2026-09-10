@@ -46,18 +46,18 @@ const ToolDetail = () => {
         .maybeSingle();
 
       if (error) throw error;
-      
+
+      if (!data) return null;
+
       // Increment view count
-      if (data) {
-        await supabase
-          .from('ai_tools')
-          .update({ view_count: (data.view_count || 0) + 1 })
-          .eq('id', id);
-      }
+      await supabase
+        .from('ai_tools')
+        .update({ view_count: (data.view_count || 0) + 1 })
+        .eq('id', id);
 
       return {
         ...data,
-        category: data?.categories,
+        category: data.categories,
       } as AiTool & { category?: Category };
     },
   });
