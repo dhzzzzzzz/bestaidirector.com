@@ -214,30 +214,42 @@ export type Database = {
       comments: {
         Row: {
           content: string
+          content_en: string | null
+          content_ja: string | null
+          content_ko: string | null
           created_at: string
+          guest_name: string | null
           id: string
           rating: number | null
           tool_id: string
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           content: string
+          content_en?: string | null
+          content_ja?: string | null
+          content_ko?: string | null
           created_at?: string
+          guest_name?: string | null
           id?: string
           rating?: number | null
           tool_id: string
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           content?: string
+          content_en?: string | null
+          content_ja?: string | null
+          content_ko?: string | null
           created_at?: string
+          guest_name?: string | null
           id?: string
           rating?: number | null
           tool_id?: string
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
