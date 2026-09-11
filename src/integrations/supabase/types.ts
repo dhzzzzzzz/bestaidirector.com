@@ -379,6 +379,34 @@ export type Database = {
           tool_id: string | null
           updated_at: string | null
         }
+        Insert: {
+          author_avatar_url?: never
+          author_name?: never
+          content?: string | null
+          content_en?: string | null
+          content_ja?: string | null
+          content_ko?: string | null
+          created_at?: string | null
+          guest_name?: string | null
+          id?: string | null
+          rating?: number | null
+          tool_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          author_avatar_url?: never
+          author_name?: never
+          content?: string | null
+          content_en?: string | null
+          content_ja?: string | null
+          content_ko?: string | null
+          created_at?: string | null
+          guest_name?: string | null
+          id?: string | null
+          rating?: number | null
+          tool_id?: string | null
+          updated_at?: string | null
+        }
         Relationships: [
           {
             foreignKeyName: "comments_tool_id_fkey"
