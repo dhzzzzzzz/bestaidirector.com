@@ -66,24 +66,12 @@ const ToolDetail = () => {
     queryKey: ['tool-comments', id, language],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('comments')
+        .from('public_comments' as any)
         .select('*')
         .eq('tool_id', id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-
-      const userIds = [...new Set((data || []).map((c: any) => c.user_id).filter(Boolean))];
-      let profileMap: Record<string, { username: string }> = {};
-      if (userIds.length) {
-        const { data: profs } = await supabase
-          .from('public_profiles' as any)
-          .select('user_id, username, avatar_url')
-          .in('user_id', userIds);
-        profileMap = Object.fromEntries(
-          ((profs as any[]) || []).map((p) => [p.user_id, p])
-        );
-      }
 
       const guestPrefix = language === 'zh' ? '用户' : language === 'ja' ? 'ユーザー' : language === 'ko' ? '사용자' : 'user_';
       const localizeContent = (c: any) => {
@@ -96,9 +84,11 @@ const ToolDetail = () => {
       return (data || []).map((c: any) => ({
         ...c,
         content: localizeContent(c),
-        profile: c.user_id
-          ? profileMap[c.user_id] || { username: 'user' }
-          : { username: guestPrefix + String(c.guest_name || '').replace(/^user_/, '') },
+        profile: {
+          username: c.author_name === 'user'
+            ? guestPrefix + String(c.guest_name || '').replace(/^user_/, '')
+            : c.author_name,
+        },
       })) as (Comment & { profile: { username: string } })[];
 
     },
