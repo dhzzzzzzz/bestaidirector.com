@@ -437,6 +437,24 @@ export type Database = {
       }
     }
     Functions: {
+      get_tool_comments: {
+        Args: { _tool_id: string }
+        Returns: {
+          author_avatar_url: string
+          author_name: string
+          content: string
+          content_en: string
+          content_ja: string
+          content_ko: string
+          created_at: string
+          guest_name: string
+          id: string
+          is_own: boolean
+          rating: number
+          tool_id: string
+          updated_at: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
