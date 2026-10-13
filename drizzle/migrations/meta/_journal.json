@@ -8,6 +8,13 @@
       "when": 1791851778266,
       "tag": "0000_public_tool_comments_function",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791851836799,
+      "tag": "0001_news_comments",
+      "breakpoints": true
     }
   ]
 }

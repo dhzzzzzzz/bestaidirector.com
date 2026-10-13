@@ -13,6 +13,7 @@ import Explore from "./pages/Explore";
 import SmartSearchPage from "./pages/SmartSearchPage";
 import Category from "./pages/Category";
 import ToolDetail from "./pages/ToolDetail";
+import NewsDetail from "./pages/NewsDetail";
 import Profile from "./pages/Profile";
 import AdminLayout from "./pages/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
@@ -40,6 +41,7 @@ const App = () => (
               <Route path="/smart-search" element={<SmartSearchPage />} />
               <Route path="/category/:slug" element={<Category />} />
               <Route path="/tool/:id" element={<ToolDetail />} />
+              <Route path="/news/:id" element={<NewsDetail />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
               

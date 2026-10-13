@@ -21,6 +21,8 @@ export type Database = {
           image_url: string | null
           is_hot: boolean | null
           published_at: string
+          rating_avg: number
+          rating_count: number
           source: string | null
           source_en: string | null
           source_ja: string | null
@@ -42,6 +44,8 @@ export type Database = {
           image_url?: string | null
           is_hot?: boolean | null
           published_at?: string
+          rating_avg?: number
+          rating_count?: number
           source?: string | null
           source_en?: string | null
           source_ja?: string | null
@@ -63,6 +67,8 @@ export type Database = {
           image_url?: string | null
           is_hot?: boolean | null
           published_at?: string
+          rating_avg?: number
+          rating_count?: number
           source?: string | null
           source_en?: string | null
           source_ja?: string | null
@@ -290,6 +296,44 @@ export type Database = {
           },
         ]
       }
+      news_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          news_id: string
+          rating: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          news_id: string
+          rating: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          news_id?: string
+          rating?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_comments_news_id_fkey"
+            columns: ["news_id"]
+            isOneToOne: false
+            referencedRelation: "ai_news"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -437,6 +481,17 @@ export type Database = {
       }
     }
     Functions: {
+      get_news_comments: {
+        Args: { _news_id: string }
+        Returns: {
+          author_name: string
+          content: string
+          created_at: string
+          id: string
+          is_own: boolean
+          rating: number
+        }[]
+      }
       get_tool_comments: {
         Args: { _tool_id: string }
         Returns: {
