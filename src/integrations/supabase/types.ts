@@ -334,6 +334,36 @@ export type Database = {
           },
         ]
       }
+      news_job_state: {
+        Row: {
+          id: string
+          last_error: string | null
+          last_inserted: number | null
+          last_run_at: string | null
+          last_success_at: string | null
+          locked_until: string | null
+          status: string
+        }
+        Insert: {
+          id: string
+          last_error?: string | null
+          last_inserted?: number | null
+          last_run_at?: string | null
+          last_success_at?: string | null
+          locked_until?: string | null
+          status?: string
+        }
+        Update: {
+          id?: string
+          last_error?: string | null
+          last_inserted?: number | null
+          last_run_at?: string | null
+          last_success_at?: string | null
+          locked_until?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

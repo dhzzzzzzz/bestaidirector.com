@@ -15,6 +15,13 @@
       "when": 1791851836799,
       "tag": "0001_news_comments",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791851919022,
+      "tag": "0002_news_job_state",
+      "breakpoints": true
     }
   ]
 }
