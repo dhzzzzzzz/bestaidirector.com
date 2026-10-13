@@ -227,7 +227,7 @@ Deno.serve(async (req) => {
       reranked = await chatJSON(apiKey,
         `你是AI工具推荐专家。从候选列表中选出与用户需求真正相关的工具，最多${MAX_FINAL}个、按相关性排序；不相关的不要凑数。
 排序权重：分类匹配 > 核心用途匹配 > 关键特性匹配 > 口碑评分。index 必须是候选列表中的序号。
-reason 30字内；summary 50字内；sufficient 表示候选是否足以满足需求。
+reason 30字内（非中文语言则不超过 20 个词）；summary 50字内（非中文语言则不超过 30 个词）；sufficient 表示候选是否足以满足需求。
 重要：reason 和 summary 必须全部使用「${LANG_NAME[lang]}」书写（工具名可保留原文），即使候选信息是中文也要翻译成该语言。`,
         `用户需求：${userQuery}${history.length ? `\n之前的搜索：${history.join(" → ")}` : ""}\n\n候选工具：\n${list}`,
         1200, "rerank", RERANK_SCHEMA);
@@ -241,7 +241,7 @@ reason 30字内；summary 50字内；sufficient 表示候选是否足以满足�
     const seen = new Set<string>();
     let picks = (reranked?.recommendations || [])
       .filter((r) => Number.isInteger(r.index) && r.index >= 1 && r.index <= candidates.length)
-      .map((r) => ({ tool: candidates[r.index - 1], reason: String(r.reason || "").slice(0, 60) }))
+      .map((r) => ({ tool: candidates[r.index - 1], reason: String(r.reason || "").slice(0, lang === "zh" ? 60 : 160) }))
       .filter((p) => !seen.has(p.tool.id) && seen.add(p.tool.id))
       .slice(0, MAX_FINAL);
 
