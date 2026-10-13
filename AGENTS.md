@@ -1,0 +1,1 @@
+- Smart search (ai-recommend) is a fixed workflow: LLM plan → deterministic hybrid retrieval (vector + keyword, RRF) → at most one LLM query rewrite on weak recall → LLM rerank; LLM output is schema-constrained and validated in ranking.ts. Why: predictable cost, no write tools exposed to the model.

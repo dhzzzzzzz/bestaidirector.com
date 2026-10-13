@@ -27,6 +27,7 @@ export const SmartSearch = () => {
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<SmartSearchResult | null>(null);
+  const [history, setHistory] = useState<string[]>([]);
   const { data: toolsCount } = useToolsCount();
   const formattedCount = formatToolsCount(toolsCount);
 
@@ -43,7 +44,7 @@ export const SmartSearch = () => {
 
     try {
       const { data, error } = await supabase.functions.invoke('ai-recommend', {
-        body: { query: query.trim() },
+        body: { query: query.trim(), history: history.slice(-3) },
       });
 
       if (error) {
@@ -56,6 +57,7 @@ export const SmartSearch = () => {
       }
 
       setResult(data);
+      setHistory((h) => [...h.filter((q) => q !== query.trim()), query.trim()].slice(-3));
     } catch (error) {
       console.error('Smart search error:', error);
       toast.error(t('smart.error'));
