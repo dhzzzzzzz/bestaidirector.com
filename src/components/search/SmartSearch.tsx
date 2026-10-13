@@ -23,7 +23,7 @@ interface SmartSearchResult {
 }
 
 export const SmartSearch = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<SmartSearchResult | null>(null);
@@ -44,7 +44,7 @@ export const SmartSearch = () => {
 
     try {
       const { data, error } = await supabase.functions.invoke('ai-recommend', {
-        body: { query: query.trim(), history: history.slice(-3) },
+        body: { query: query.trim(), history: history.slice(-3), lang: language },
       });
 
       if (error) {

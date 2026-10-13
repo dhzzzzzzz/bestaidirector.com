@@ -90,6 +90,15 @@ const RERANK_SCHEMA = {
   },
 };
 
+type Lang = "zh" | "en" | "ja" | "ko";
+const LANG_NAME: Record<Lang, string> = { zh: "简体中文", en: "English", ja: "日本語", ko: "한국어" };
+const MSG: Record<Lang, { empty: string; noMatch: string; summary: string; reason: string; fail: string; noAi: string }> = {
+  zh: { empty: "请输入您的需求描述", noMatch: "暂未找到匹配的工具，换个说法再试试", summary: "根据您的需求，为您推荐以上AI工具", reason: "与您的需求语义高度相关", fail: "推荐服务出错，请稍后重试", noAi: "AI服务未配置" },
+  en: { empty: "Please describe what you need", noMatch: "No matching tools found. Try rephrasing your request.", summary: "Here are the AI tools we recommend for your needs.", reason: "Closely matches your request", fail: "Recommendation service error. Please try again later.", noAi: "AI service is not configured" },
+  ja: { empty: "ご要望を入力してください", noMatch: "一致するツールが見つかりませんでした。表現を変えてお試しください", summary: "ご要望に合わせて、上記のAIツールをおすすめします", reason: "ご要望との関連性が高いツールです", fail: "おすすめサービスでエラーが発生しました。後でもう一度お試しください", noAi: "AIサービスが未設定です" },
+  ko: { empty: "필요한 내용을 입력해 주세요", noMatch: "일치하는 도구를 찾지 못했습니다. 다른 표현으로 다시 시도해 보세요", summary: "요청하신 내용에 맞춰 위 AI 도구를 추천합니다", reason: "요청과 관련성이 높은 도구입니다", fail: "추천 서비스 오류가 발생했습니다. 잠시 후 다시 시도해 주세요", noAi: "AI 서비스가 설정되지 않았습니다" },
+};
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   const reply = (body: unknown, status = 200) =>
@@ -99,7 +108,9 @@ Deno.serve(async (req) => {
   try {
     const body = await req.json().catch(() => ({}));
     const query = body?.query;
-    if (!query || typeof query !== "string" || !query.trim()) return reply({ error: "请输入您的需求描述" }, 400);
+    const lang: Lang = ["zh", "en", "ja", "ko"].includes(body?.lang) ? body.lang : "zh";
+    const M = MSG[lang];
+    if (!query || typeof query !== "string" || !query.trim()) return reply({ error: M.empty }, 400);
     const userQuery = query.trim().slice(0, 500);
     // Short-term session memory: previous queries in this search session (client-held, max 3).
     const history: string[] = Array.isArray(body?.history)
@@ -107,7 +118,7 @@ Deno.serve(async (req) => {
       : [];
 
     const apiKey = Deno.env.get("LOVABLE_API_KEY");
-    if (!apiKey) throw new Error("AI服务未配置");
+    if (!apiKey) throw new Error(M.noAi);
 
     // Read-only access: the agent can only call fixed, server-defined read tools (no write tools exposed to the LLM).
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
@@ -200,7 +211,7 @@ Deno.serve(async (req) => {
 
     const candidates = rrfFuse(vec, kw).slice(0, CANDIDATES);
     if (candidates.length === 0) {
-      return reply({ recommendations: [], summary: "暂未找到匹配的工具，换个说法再试试", query: userQuery, debug: { trace } });
+      return reply({ recommendations: [], summary: M.noMatch, query: userQuery, debug: { trace } });
     }
 
     // ---------- Step 4 (LLM): rerank + self-check ----------
@@ -216,7 +227,8 @@ Deno.serve(async (req) => {
       reranked = await chatJSON(apiKey,
         `你是AI工具推荐专家。从候选列表中选出与用户需求真正相关的工具，最多${MAX_FINAL}个、按相关性排序；不相关的不要凑数。
 排序权重：分类匹配 > 核心用途匹配 > 关键特性匹配 > 口碑评分。index 必须是候选列表中的序号。
-reason 30字内；summary 50字内；sufficient 表示候选是否足以满足需求。`,
+reason 30字内（非中文语言则不超过 20 个词）；summary 50字内（非中文语言则不超过 30 个词）；sufficient 表示候选是否足以满足需求。
+重要：reason 和 summary 必须全部使用「${LANG_NAME[lang]}」书写（工具名可保留原文），即使候选信息是中文也要翻译成该语言。`,
         `用户需求：${userQuery}${history.length ? `\n之前的搜索：${history.join(" → ")}` : ""}\n\n候选工具：\n${list}`,
         1200, "rerank", RERANK_SCHEMA);
       trace.push(`rerank:ok sufficient=${reranked.sufficient}`);
@@ -229,17 +241,26 @@ reason 30字内；summary 50字内；sufficient 表示候选是否足以满足�
     const seen = new Set<string>();
     let picks = (reranked?.recommendations || [])
       .filter((r) => Number.isInteger(r.index) && r.index >= 1 && r.index <= candidates.length)
-      .map((r) => ({ tool: candidates[r.index - 1], reason: String(r.reason || "").slice(0, 60) }))
+      .map((r) => ({ tool: candidates[r.index - 1], reason: String(r.reason || "").slice(0, lang === "zh" ? 60 : 160) }))
       .filter((p) => !seen.has(p.tool.id) && seen.add(p.tool.id))
       .slice(0, MAX_FINAL);
 
     if (picks.length === 0) {
       const sims = vec.map((v) => Number(v.similarity) || 0);
       const k = dynamicTopK(sims, 3, MAX_FINAL);
-      picks = candidates.slice(0, k).map((t) => ({ tool: t, reason: "与您的需求语义高度相关" }));
+      picks = candidates.slice(0, k).map((t) => ({ tool: t, reason: M.reason }));
     }
 
+    // Attach translated name/description columns so the client can show the user's language.
+    const trMap = new Map<string, Record<string, unknown>>();
+    if (lang !== "zh" && picks.length) {
+      const { data: tr } = await supabase.from("ai_tools")
+        .select("id, name_en, name_ja, name_ko, description_en, description_ja, description_ko")
+        .in("id", picks.map((p) => p.tool.id as string));
+      for (const r of tr || []) trMap.set(r.id as string, r);
+    }
     const recommendations = picks.map(({ tool, reason }) => ({
+      ...(trMap.get(tool.id as string) || {}),
       id: tool.id, name: tool.name, description: tool.description, website_url: tool.website_url,
       logo_url: tool.logo_url, tags: tool.tags, category_id: tool.category_id,
       category_name: tool.category_id ? categoryMap.get(tool.category_id as string) ?? null : null,
@@ -250,7 +271,7 @@ reason 30字内；summary 50字内；sufficient 表示候选是否足以满足�
     console.log(`query="${userQuery}" ${trace.join(" | ")}`);
     return reply({
       recommendations,
-      summary: reranked?.summary || "根据您的需求，为您推荐以上AI工具",
+      summary: reranked?.summary || M.summary,
       query: userQuery,
       rewritten_query: rewritten,
       debug: { trace, candidates: candidates.length },
@@ -258,6 +279,6 @@ reason 30字内；summary 50字内；sufficient 表示候选是否足以满足�
   } catch (error) {
     console.error("AI Recommend error:", error, trace);
     const status = error instanceof GatewayError ? error.status : 500;
-    return reply({ error: error instanceof Error ? error.message : "推荐服务出错，请稍后重试", recommendations: [] }, status);
+    return reply({ error: error instanceof Error ? error.message : MSG.zh.fail, recommendations: [] }, status);
   }
 });
