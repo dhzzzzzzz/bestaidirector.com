@@ -81,8 +81,8 @@ const ToolDetail = () => {
         ...c,
         content: localizeContent(c),
         profile: {
-          username: c.author_name === 'user'
-            ? guestPrefix + String(c.guest_name || '').replace(/^user_/, '')
+          username: /^user_/.test(c.author_name || '')
+            ? guestPrefix + String(c.author_name).replace(/^user_/, '')
             : c.author_name,
         },
       })) as (Comment & { profile: { username: string } })[];
