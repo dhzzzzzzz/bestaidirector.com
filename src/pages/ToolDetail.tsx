@@ -65,11 +65,7 @@ const ToolDetail = () => {
   const { data: comments } = useQuery({
     queryKey: ['tool-comments', id, language],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('public_comments' as any)
-        .select('*')
-        .eq('tool_id', id)
-        .order('created_at', { ascending: false });
+      const { data, error } = await (supabase.rpc as any)('get_tool_comments', { _tool_id: id });
 
       if (error) throw error;
 
