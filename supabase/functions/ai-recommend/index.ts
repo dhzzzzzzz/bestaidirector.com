@@ -93,7 +93,7 @@ const RERANK_SCHEMA = {
 type Lang = "zh" | "en" | "ja" | "ko";
 const LANG_NAME: Record<Lang, string> = { zh: "简体中文", en: "English", ja: "日本語", ko: "한국어" };
 const MSG: Record<Lang, { empty: string; noMatch: string; summary: string; reason: string; fail: string; noAi: string }> = {
-  zh: { empty: "请输入您的需求描述", noMatch: "暂未找到匹配的工具，换个说法再试试", summary: "根据您的需求，为您推荐以上AI工具", reason: M.reason, fail: "推荐服务出错，请稍后重试", noAi: "AI服务未配置" },
+  zh: { empty: "请输入您的需求描述", noMatch: "暂未找到匹配的工具，换个说法再试试", summary: "根据您的需求，为您推荐以上AI工具", reason: "与您的需求语义高度相关", fail: "推荐服务出错，请稍后重试", noAi: "AI服务未配置" },
   en: { empty: "Please describe what you need", noMatch: "No matching tools found. Try rephrasing your request.", summary: "Here are the AI tools we recommend for your needs.", reason: "Closely matches your request", fail: "Recommendation service error. Please try again later.", noAi: "AI service is not configured" },
   ja: { empty: "ご要望を入力してください", noMatch: "一致するツールが見つかりませんでした。表現を変えてお試しください", summary: "ご要望に合わせて、上記のAIツールをおすすめします", reason: "ご要望との関連性が高いツールです", fail: "おすすめサービスでエラーが発生しました。後でもう一度お試しください", noAi: "AIサービスが未設定です" },
   ko: { empty: "필요한 내용을 입력해 주세요", noMatch: "일치하는 도구를 찾지 못했습니다. 다른 표현으로 다시 시도해 보세요", summary: "요청하신 내용에 맞춰 위 AI 도구를 추천합니다", reason: "요청과 관련성이 높은 도구입니다", fail: "추천 서비스 오류가 발생했습니다. 잠시 후 다시 시도해 주세요", noAi: "AI 서비스가 설정되지 않았습니다" },
