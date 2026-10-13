@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Newspaper, ExternalLink, Flame, Clock, ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -113,10 +114,8 @@ export const NewsSidebar = () => {
         <ul className="divide-y divide-border/40">
           {news.map((item) => (
             <li key={item.id}>
-              <a
-                href={item.source_url || '#'}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                to={`/news/${item.id}`}
                 className={cn(
                   "group block py-3 transition-colors",
                   item.is_hot && "pl-3 -ml-3 border-l-2 border-destructive/60"
@@ -153,7 +152,7 @@ export const NewsSidebar = () => {
                   </div>
                   <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
