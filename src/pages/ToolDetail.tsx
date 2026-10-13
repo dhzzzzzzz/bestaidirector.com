@@ -65,11 +65,7 @@ const ToolDetail = () => {
   const { data: comments } = useQuery({
     queryKey: ['tool-comments', id, language],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('public_comments' as any)
-        .select('*')
-        .eq('tool_id', id)
-        .order('created_at', { ascending: false });
+      const { data, error } = await (supabase.rpc as any)('get_tool_comments', { _tool_id: id });
 
       if (error) throw error;
 
@@ -85,8 +81,8 @@ const ToolDetail = () => {
         ...c,
         content: localizeContent(c),
         profile: {
-          username: c.author_name === 'user'
-            ? guestPrefix + String(c.guest_name || '').replace(/^user_/, '')
+          username: /^user_/.test(c.author_name || '')
+            ? guestPrefix + String(c.author_name).replace(/^user_/, '')
             : c.author_name,
         },
       })) as (Comment & { profile: { username: string } })[];
