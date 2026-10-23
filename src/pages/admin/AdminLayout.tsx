@@ -1,6 +1,7 @@
 import { Link, Outlet, useLocation, Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { LayoutDashboard, FolderOpen, Wrench, Users, ArrowLeft, Loader2 } from 'lucide-react';
+import logoIcon from '@/assets/logo-compass.png';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -44,9 +45,7 @@ const AdminLayout = () => {
       {/* Sidebar */}
       <aside className="w-64 border-r bg-muted/30 p-4 flex flex-col">
         <div className="flex items-center gap-2 mb-8">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-            <span className="text-sm font-bold text-primary-foreground">AI</span>
-          </div>
+          <img src={logoIcon} alt="Best AI Director" className="h-8 w-8" />
           <span className="font-bold">后台管理</span>
         </div>
 

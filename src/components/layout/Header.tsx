@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { useLanguage } from '@/contexts/LanguageContext';
+import logoIcon from '@/assets/logo-compass.png';
 
 export const Header = () => {
   const { user, isAdmin, signOut } = useAuth();
@@ -34,9 +35,7 @@ export const Header = () => {
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-            <span className="text-lg font-bold text-primary-foreground">AI</span>
-          </div>
+          <img src={logoIcon} alt="Best AI Director" className="h-8 w-8" />
           <span className="text-xl font-bold">{t('brand.name')}</span>
         </Link>
 

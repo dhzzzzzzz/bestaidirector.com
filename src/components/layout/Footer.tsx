@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
+import logoIcon from '@/assets/logo-compass.png';
 
 const categorySlugs = [
   'ai-chat',
@@ -27,9 +28,7 @@ export const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <span className="text-lg font-bold text-primary-foreground">AI</span>
-              </div>
+              <img src={logoIcon} alt="Best AI Director" className="h-8 w-8" />
               <span className="text-xl font-bold">{t('brand.name')}</span>
             </Link>
             <p className="text-sm text-muted-foreground">
