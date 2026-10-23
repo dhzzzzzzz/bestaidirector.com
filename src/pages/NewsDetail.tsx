@@ -129,7 +129,7 @@ export default function NewsDetail() {
           ) : (
             <div className="mb-8 flex items-center justify-between gap-4 py-4 border-y">
               <p className="text-sm text-muted-foreground">{tx.login}</p>
-              <Button asChild size="sm"><Link to={`/login?redirect=/news/${id}`}>{tx.loginBtn}</Link></Button>
+              <Button asChild size="sm"><Link to={`/login?next=${encodeURIComponent(`/news/${id}`)}`}>{tx.loginBtn}</Link></Button>
             </div>
           )}
 
