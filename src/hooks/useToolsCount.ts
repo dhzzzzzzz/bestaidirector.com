@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
-const FALLBACK_COUNT = 4000;
+const FALLBACK_COUNT = 4200;
 
 export const useToolsCount = () => {
   return useQuery({
