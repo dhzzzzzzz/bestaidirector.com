@@ -13,7 +13,7 @@ export default defineMcp({
   title: "AI 宝藏指南",
   version: "0.1.0",
   instructions:
-    "Tools for the AI 宝藏指南 directory of 4000+ AI tools. Use `search_ai_tools` and `list_categories` to browse, `get_ai_tool` for full details, and the favorite tools to manage the signed-in user's saved tools.",
+    "Tools for the AI 宝藏指南 directory of 4200+ AI tools. Use `search_ai_tools` and `list_categories` to browse, `get_ai_tool` for full details, and the favorite tools to manage the signed-in user's saved tools.",
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated",

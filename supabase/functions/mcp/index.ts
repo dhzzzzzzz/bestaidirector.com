@@ -225,7 +225,7 @@ var mcp_default = defineMcp({
   name: "ai",
   title: "AI \u5B9D\u85CF\u6307\u5357",
   version: "0.1.0",
-  instructions: "Tools for the AI \u5B9D\u85CF\u6307\u5357 directory of 4000+ AI tools. Use `search_ai_tools` and `list_categories` to browse, `get_ai_tool` for full details, and the favorite tools to manage the signed-in user's saved tools.",
+  instructions: "Tools for the AI \u5B9D\u85CF\u6307\u5357 directory of 4200+ AI tools. Use `search_ai_tools` and `list_categories` to browse, `get_ai_tool` for full details, and the favorite tools to manage the signed-in user's saved tools.",
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated"
